@@ -544,7 +544,7 @@ export default function FurniturePage() {
                 </div>
 
                 <p className='mt-1.5 text-xs text-stone-400'>
-                  PNG, JPG, WebP, AVIF, GIF or SVG · max 5 MB · stored in
+                  PNG, JPG, WebP, AVIF, GIF or SVG · max 4 MB · stored in
                   Supabase Storage
                 </p>
 
