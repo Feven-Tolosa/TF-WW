@@ -19,7 +19,8 @@ const ALLOWED = new Set([
   '.svg',
 ])
 
-const MAX_SIZE_MB = 5
+// Capped below Vercel's 4.5 MB serverless request payload limit.
+const MAX_SIZE_MB = 4
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: MAX_SIZE_MB * 1024 * 1024 },
