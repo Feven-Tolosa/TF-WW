@@ -16,9 +16,9 @@ export default function AdminIndexPage() {
   return (
     <div className='flex min-h-screen items-center justify-center bg-stone-100 px-4'>
       <div className='admin-card w-full max-w-sm p-10 text-center'>
-        <h1 className='mb-1 text-2xl font-light tracking-tight text-stone-900'>
+        <Link href='/' className='mb-1 text-2xl font-light tracking-tight text-stone-900'>
           TF Wood Works
-        </h1>
+        </Link>
         <p className='mb-2 text-xs font-medium uppercase tracking-[0.3em] text-wood-700'>
           Admin Panel
         </p>
