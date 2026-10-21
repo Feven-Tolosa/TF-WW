@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Eye, EyeOff } from 'lucide-react'
 import { api, setToken, getToken } from '@/lib/api'
 
 export default function AdminLogin() {
@@ -16,6 +17,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -71,14 +73,28 @@ export default function AdminLogin() {
 
         <div className='mb-6'>
           <label className='admin-label'>Password</label>
-          <input
-            type='password'
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder='••••••••'
-            className='admin-input'
-          />
+          <div className='relative'>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder='••••••••'
+              className='admin-input pr-11'
+            />
+            <button
+              type='button'
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              className='absolute inset-y-0 right-0 flex w-11 items-center justify-center text-stone-400 transition-colors hover:text-stone-700 focus:outline-none'
+            >
+              {showPassword ? (
+                <EyeOff className='h-4.5 w-4.5' />
+              ) : (
+                <Eye className='h-4.5 w-4.5' />
+              )}
+            </button>
+          </div>
         </div>
 
         <button type='submit' disabled={loading} className='admin-btn w-full'>
