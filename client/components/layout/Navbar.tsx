@@ -7,29 +7,34 @@ import { Heart, Menu, Search, ShoppingBag, X } from 'lucide-react'
 import Container from '../Container'
 import { getWishlist, WISHLIST_EVENT } from '@/lib/wishlist'
 import SearchModal from './SearchModal'
+import LanguageButton from '../LanguageButton'
+import { T, useLanguage, type TranslationKey } from '@/lib/i18n'
 
-const categories = [
+const categories: { key: TranslationKey; slug: string; items: TranslationKey[]; image: string }[] = [
   {
-    name: 'Chairs',
-    items: ['Dining Chairs', 'Office Chairs', 'Armchairs'],
+    key: 'category.chairs',
+    slug: 'chairs',
+    items: ['nav.diningChairs', 'nav.officeChairs', 'nav.armchairs'],
     image: '/images/1.png',
   },
   {
-    name: 'Tables',
-    items: ['Dining Tables', 'Coffee Tables', 'Side Tables'],
+    key: 'category.tables',
+    slug: 'tables',
+    items: ['nav.coffeeTables', 'nav.sideTables'],
     image: '/images/4.png',
   },
   {
-    name: 'Beds',
-    items: ['Bed Frames', 'Night Stands'],
+    key: 'category.beds',
+    slug: 'beds',
+    items: ['nav.bedFrames', 'nav.nightStands'],
     image: '/images/2.png',
   },
 ]
 
-const navLinks = [
-  { label: 'Home', href: '/' },
-  { label: 'Collections', href: '/collections' },
-  { label: 'Order', href: '/order' },
+const navLinks: { key: TranslationKey; href: string }[] = [
+  { key: 'nav.home', href: '/' },
+  { key: 'nav.collections', href: '/collections' },
+  { key: 'nav.order', href: '/order' },
 ]
 
 export default function Navbar() {
@@ -38,6 +43,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [wishlistCount, setWishlistCount] = useState(0)
+  const { t } = useLanguage()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -81,12 +87,12 @@ export default function Navbar() {
           {/* Desktop menu */}
           <ul className='hidden items-center gap-10 text-sm tracking-wide text-white lg:flex'>
             {navLinks.map((link) => (
-              <li key={link.label}>
+              <li key={link.key}>
                 <Link
                   href={link.href}
                   className='relative py-2 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-wood-300 after:transition-transform after:duration-300 hover:text-wood-200 hover:after:scale-x-100'
                 >
-                  {link.label}
+                  <T k={link.key} />
                 </Link>
               </li>
             ))}
@@ -94,7 +100,7 @@ export default function Navbar() {
             {/* Shop with mega menu */}
             <li className='group/static static'>
               <span className='cursor-pointer py-2 transition-colors group-hover/static:text-wood-200'>
-                Shop
+                <T k='nav.shop' />
               </span>
 
               {/* Mega menu */}
@@ -103,21 +109,21 @@ export default function Navbar() {
                   <Container>
                     <div className='grid grid-cols-4 gap-10'>
                       {categories.map((cat) => (
-                        <div key={cat.name}>
+                        <div key={cat.key}>
                           <Link
-                            href={`/category/${cat.name.toLowerCase()}`}
+                            href={`/category/${cat.slug}`}
                             className='mb-5 block text-sm font-medium uppercase tracking-widest text-white'
                           >
-                            {cat.name}
+                            <T k={cat.key} />
                           </Link>
                           <ul className='space-y-3 text-sm text-white/60'>
                             {cat.items.map((item) => (
                               <li key={item}>
                                 <Link
-                                  href={`/category/${cat.name.toLowerCase()}`}
+                                  href={`/category/${cat.slug}`}
                                   className='transition-colors hover:text-wood-300'
                                 >
-                                  {item}
+                                  <T k={item} />
                                 </Link>
                               </li>
                             ))}
@@ -132,14 +138,14 @@ export default function Navbar() {
                       >
                         <Image
                           src='/images/3.png'
-                          alt='Featured collection'
+                          alt={t('nav.featured')}
                           fill
                           sizes='25vw'
                           className='object-cover transition-transform duration-700 group-hover/promo:scale-105'
                         />
                         <div className='absolute inset-0 bg-black/30 transition-colors group-hover/promo:bg-black/50' />
                         <span className='absolute bottom-4 left-4 text-xs uppercase tracking-widest text-white'>
-                          New Arrivals →
+                          <T k='nav.newArrivals' /> →
                         </span>
                       </Link>
                     </div>
@@ -151,19 +157,20 @@ export default function Navbar() {
 
           {/* Icons */}
           <div className='flex items-center gap-5 text-white md:gap-6'>
+            <LanguageButton />
             <button
               onClick={() => {
                 setSearchCount((c) => c + 1)
                 setSearchOpen(true)
               }}
-              aria-label='Search'
+              aria-label={t('nav.search')}
               className='transition-opacity hover:opacity-70'
             >
               <Search size={18} />
             </button>
             <Link
               href='/wishlist'
-              aria-label='Wishlist'
+              aria-label={t('nav.wishlist')}
               className='relative hidden transition-opacity hover:opacity-70 sm:block'
             >
               <Heart size={18} />
@@ -175,14 +182,14 @@ export default function Navbar() {
             </Link>
             <Link
               href='/order'
-              aria-label='Cart'
+              aria-label={t('nav.cart')}
               className='transition-opacity hover:opacity-70'
             >
               <ShoppingBag size={18} />
             </Link>
             <button
               onClick={() => setMenuOpen(true)}
-              aria-label='Open menu'
+              aria-label={t('nav.openMenu')}
               className='lg:hidden'
             >
               <Menu size={20} />
@@ -201,19 +208,22 @@ export default function Navbar() {
           <span className='text-sm font-light uppercase tracking-[0.25em] text-white'>
             TF <span className='text-wood-300'>Wood Works</span>
           </span>
-          <button
-            onClick={() => setMenuOpen(false)}
-            aria-label='Close menu'
-            className='text-white'
-          >
-            <X size={24} />
-          </button>
+          <div className='flex items-center gap-5'>
+            <LanguageButton />
+            <button
+              onClick={() => setMenuOpen(false)}
+              aria-label={t('nav.closeMenu')}
+              className='text-white'
+            >
+              <X size={24} />
+            </button>
+          </div>
         </div>
 
         <nav className='flex flex-1 flex-col justify-center gap-2 px-8'>
           {navLinks.map((link, i) => (
             <Link
-              key={link.label}
+              key={link.key}
               href={link.href}
               onClick={() => setMenuOpen(false)}
               className={`border-b border-white/10 py-5 text-3xl font-light tracking-wide text-white transition-all duration-500 hover:text-wood-300 ${
@@ -223,13 +233,13 @@ export default function Navbar() {
               }`}
               style={{ transitionDelay: `${i * 80}ms` }}
             >
-              {link.label}
+              <T k={link.key} />
             </Link>
           ))}
           {categories.map((cat, i) => (
             <Link
-              key={cat.name}
-              href={`/category/${cat.name.toLowerCase()}`}
+              key={cat.key}
+              href={`/category/${cat.slug}`}
               onClick={() => setMenuOpen(false)}
               className={`py-4 text-lg font-light tracking-wide text-white/50 transition-all duration-500 hover:text-wood-300 ${
                 menuOpen
@@ -238,7 +248,7 @@ export default function Navbar() {
               }`}
               style={{ transitionDelay: `${(navLinks.length + i) * 80}ms` }}
             >
-              {cat.name}
+              <T k={cat.key} />
             </Link>
           ))}
         </nav>

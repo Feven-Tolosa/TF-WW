@@ -5,33 +5,37 @@ import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import Container from './Container'
+import { T, useLanguage, type TranslationKey } from '@/lib/i18n'
 
-const slides = [
+const slides: {
+  image: string
+  title: TranslationKey
+  subtitle: TranslationKey
+  description: TranslationKey
+}[] = [
   {
     image: '/images/2.png',
-    title: 'Transform Your Space',
-    subtitle: 'with Timeless Elegance',
-    description:
-      'Handcrafted furniture designed for comfort, warmth and style.',
+    title: 'hero.slide1Title',
+    subtitle: 'hero.slide1Subtitle',
+    description: 'hero.slide1Description',
   },
   {
     image: '/images/3.png',
-    title: 'Crafted with',
-    subtitle: 'Natural Warmth',
-    description:
-      'Premium solid-wood furniture built to last for generations.',
+    title: 'hero.slide2Title',
+    subtitle: 'hero.slide2Subtitle',
+    description: 'hero.slide2Description',
   },
   {
     image: '/images/4.png',
-    title: 'Designed for',
-    subtitle: 'Modern Living',
-    description:
-      'Minimal, elegant and functional collections for every room.',
+    title: 'hero.slide3Title',
+    subtitle: 'hero.slide3Subtitle',
+    description: 'hero.slide3Description',
   },
 ]
 
 export default function Hero() {
   const [current, setCurrent] = useState(0)
+  const { t } = useLanguage()
 
   const nextSlide = useCallback(
     () => setCurrent((prev) => (prev + 1) % slides.length),
@@ -86,18 +90,18 @@ export default function Hero() {
           <div key={current} className='max-w-3xl'>
             <p className='mb-6 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-white/70 opacity-0 animate-heroFade'>
               <span className='h-px w-10 bg-wood-400' />
-              TF Wood Works — Est. Craftsmanship
+              <T k='hero.eyebrow' />
             </p>
 
             <h1 className='text-5xl leading-[1.05] font-light tracking-tight text-white md:text-7xl'>
-              <span className='block opacity-0 animate-heroText'>{slide.title}</span>
+              <span className='block opacity-0 animate-heroText'>{t(slide.title)}</span>
               <span className='block text-wood-300 opacity-0 animate-heroText delay-100 italic'>
-                {slide.subtitle}
+                {t(slide.subtitle)}
               </span>
             </h1>
 
             <p className='mt-6 max-w-xl text-base text-white/75 md:text-lg opacity-0 translate-y-6 animate-heroText delay-200'>
-              {slide.description}
+              {t(slide.description)}
             </p>
 
             <div className='mt-10 flex flex-wrap items-center gap-4 opacity-0 translate-y-6 animate-heroText delay-300'>
@@ -105,13 +109,13 @@ export default function Hero() {
                 href='/collections'
                 className='bg-white px-8 py-4 text-sm font-medium uppercase tracking-widest text-stone-900 transition-colors duration-300 hover:bg-wood-400 hover:text-white'
               >
-                Shop Now
+                <T k='hero.shopNow' />
               </Link>
               <Link
                 href='/category/dining'
                 className='group border-b border-white/40 pb-1 text-sm uppercase tracking-widest text-white transition-colors hover:border-wood-300 hover:text-wood-300'
               >
-                Explore Collections{' '}
+                <T k='hero.explore' />{' '}
                 <span className='inline-block transition-transform duration-300 group-hover:translate-x-1'>
                   →
                 </span>
@@ -131,7 +135,7 @@ export default function Hero() {
                 <button
                   key={s.image}
                   onClick={() => setCurrent(index)}
-                  aria-label={`Go to slide ${index + 1}`}
+                  aria-label={t('hero.goToSlide', { n: index + 1 })}
                   className={`h-1 transition-all duration-500 ${
                     index === current ? 'w-12 bg-wood-300' : 'w-6 bg-white/30 hover:bg-white/60'
                   }`}
@@ -145,14 +149,14 @@ export default function Hero() {
               </span>
               <button
                 onClick={prevSlide}
-                aria-label='Previous slide'
+                aria-label={t('hero.previous')}
                 className='flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white transition-all duration-300 hover:border-wood-300 hover:bg-wood-300 hover:text-stone-900'
               >
                 <ArrowLeft size={16} />
               </button>
               <button
                 onClick={nextSlide}
-                aria-label='Next slide'
+                aria-label={t('hero.next')}
                 className='flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white transition-all duration-300 hover:border-wood-300 hover:bg-wood-300 hover:text-stone-900'
               >
                 <ArrowRight size={16} />

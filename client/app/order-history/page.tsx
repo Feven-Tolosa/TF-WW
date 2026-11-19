@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { PackageSearch, Search } from 'lucide-react'
 import Container from '@/components/Container'
 import { api } from '@/lib/api'
+import { Localized, T, useLanguage } from '@/lib/i18n'
 
 type Order = {
   id: number
@@ -21,8 +22,8 @@ const statusStyles: Record<Order['status'], string> = {
   CANCELLED: 'bg-red-100 text-red-800',
 }
 
-function formatDate(value: string) {
-  return new Date(value).toLocaleDateString(undefined, {
+function formatDate(value: string, language: 'en' | 'am') {
+  return new Date(value).toLocaleDateString(language === 'am' ? 'am-ET' : undefined, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -35,6 +36,7 @@ export default function OrderHistoryPage() {
   const [searched, setSearched] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const { language, t } = useLanguage()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -61,11 +63,10 @@ export default function OrderHistoryPage() {
         <div className='mx-auto max-w-2xl text-center'>
           <PackageSearch size={40} className='mx-auto text-stone-300' />
           <h1 className='mt-4 text-3xl font-light tracking-wide'>
-            Track Your Orders
+            <T k='history.title' />
           </h1>
           <p className='mt-2 text-sm text-gray-500'>
-            Enter the phone number you used when placing your order to see
-            its current status.
+            <T k='history.description' />
           </p>
         </div>
 
@@ -87,7 +88,7 @@ export default function OrderHistoryPage() {
             className='flex items-center justify-center gap-2 bg-stone-900 px-6 py-3 text-sm tracking-wide text-white transition-colors hover:bg-stone-700 disabled:opacity-50'
           >
             <Search size={16} />
-            {loading ? 'Searching…' : 'Search'}
+            {loading ? t('history.searching') : t('history.search')}
           </button>
         </form>
 
@@ -100,17 +101,19 @@ export default function OrderHistoryPage() {
         {searched && !loading && !error && (
           <div className='mx-auto mt-12 max-w-3xl'>
             {orders === null ? (
-              <p className='text-center text-gray-500'>Loading…</p>
+              <p className='text-center text-gray-500'>
+                <T k='common.loading' />
+              </p>
             ) : orders.length === 0 ? (
               <div className='py-12 text-center'>
-                <p className='text-gray-500'>
-                  No orders found for this phone number.
-                </p>
+                  <p className='text-gray-500'>
+                    <T k='history.noOrders' />
+                  </p>
                 <Link
                   href='/order'
                   className='mt-6 inline-block bg-stone-900 px-8 py-3 text-sm tracking-wide text-white transition-colors hover:bg-stone-700'
                 >
-                  Place an Order
+                  <T k='footer.placeOrder' />
                 </Link>
               </div>
             ) : (
@@ -122,20 +125,26 @@ export default function OrderHistoryPage() {
                   >
                     <div>
                       <p className='text-sm font-medium'>
-                        Order #{order.id}
+                        <T k='history.order' values={{ id: order.id }} />
                         <span className='ml-2 text-gray-400'>
-                          {formatDate(order.createdAt)}
+                          {formatDate(order.createdAt, language)}
                         </span>
                       </p>
                       <p className='text-sm text-gray-600'>
-                        {order.furniture.name} ·{' '}
+                        <Localized text={order.furniture.name} /> ·{' '}
                         {Number(order.furniture.price).toLocaleString()} ETB
                       </p>
                     </div>
                     <span
                       className={`self-start px-2 py-1 rounded text-xs sm:self-auto ${statusStyles[order.status]}`}
                     >
-                      {order.status.toLowerCase()}
+                      {t(
+                        order.status === 'PENDING'
+                          ? 'status.pending'
+                          : order.status === 'COMPLETED'
+                            ? 'status.completed'
+                            : 'status.cancelled',
+                      )}
                     </span>
                   </li>
                 ))}

@@ -5,6 +5,7 @@ import './globals.css'
 import SiteNavbar from '@/components/layout/SiteNavbar'
 import SiteFooter from '@/components/layout/SiteFooter'
 import BackToTop from '@/components/layout/BackToTop'
+import { LanguageProvider } from '@/lib/i18n'
 
 const geistSans = GeistSans
 const geistMono = GeistMono
@@ -24,10 +25,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
-        <SiteNavbar />
-        {children}
-        <SiteFooter />
-        <BackToTop />
+        <LanguageProvider>
+          <SiteNavbar />
+          {children}
+          <SiteFooter />
+          <BackToTop />
+        </LanguageProvider>
       </body>
     </html>
   )

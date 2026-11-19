@@ -1,31 +1,33 @@
 import { Hammer, Leaf, ShieldCheck, Truck } from 'lucide-react'
+import { T, type TranslationKey } from '@/lib/i18n'
 
-const features = [
+const features: {
+  icon: typeof Leaf
+  title: TranslationKey
+  description: TranslationKey
+}[] = [
   {
     icon: Leaf,
-    title: 'Premium Materials',
-    description:
-      'Carefully selected solid wood and high-quality fabrics ensure durability and elegance.',
+    title: 'why.f1Title',
+    description: 'why.f1Description',
   },
   {
     icon: Hammer,
-    title: 'Handmade Craftsmanship',
-    description:
-      'Each piece is thoughtfully crafted with precision and attention to every detail.',
+    title: 'why.f2Title',
+    description: 'why.f2Description',
   },
   {
     icon: Truck,
-    title: 'Reliable Delivery',
-    description:
-      'Safe and timely delivery across the country, handled with care from workshop to home.',
+    title: 'why.f3Title',
+    description: 'why.f3Description',
   },
 ]
 
-const stats = [
-  { value: '15+', label: 'Years of Craft' },
-  { value: '2,400+', label: 'Pieces Delivered' },
-  { value: '98%', label: 'Happy Clients' },
-  { value: '5 Yr', label: 'Warranty' },
+const stats: { value: string; label: TranslationKey }[] = [
+  { value: '15+', label: 'why.s1' },
+  { value: '2,400+', label: 'why.s2' },
+  { value: '98%', label: 'why.s3' },
+  { value: '5 Yr', label: 'why.s4' },
 ]
 
 export default function WhyChooseUs() {
@@ -36,15 +38,17 @@ export default function WhyChooseUs() {
         <div className='mx-auto mb-16 max-w-2xl text-center'>
           <p className='mb-3 inline-flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-wood-600'>
             <span className='h-px w-8 bg-wood-400' />
-            Why Choose Us
+            <T k='why.eyebrow' />
             <span className='h-px w-8 bg-wood-400' />
           </p>
           <h2 className='text-3xl font-light tracking-tight text-stone-900 md:text-4xl'>
-            Crafted for Comfort, <span className='italic text-wood-700'>Designed for Life</span>
+            <T k='why.title1' />{' '}
+            <span className='italic text-wood-700'>
+              <T k='why.title2' />
+            </span>
           </h2>
           <p className='mt-4 leading-relaxed text-stone-600'>
-            We believe furniture should feel warm, timeless, and built to last
-            for generations.
+            <T k='why.description' />
           </p>
         </div>
 
@@ -59,10 +63,10 @@ export default function WhyChooseUs() {
                 <feature.icon size={20} strokeWidth={1.75} />
               </span>
               <h3 className='mb-3 text-lg font-medium text-stone-900'>
-                {feature.title}
+                <T k={feature.title} />
               </h3>
               <p className='text-sm leading-relaxed text-stone-600'>
-                {feature.description}
+                <T k={feature.description} />
               </p>
             </div>
           ))}
@@ -77,7 +81,7 @@ export default function WhyChooseUs() {
               </p>
               <p className='mt-2 flex items-center justify-center gap-2 text-xs uppercase tracking-widest text-stone-500'>
                 <ShieldCheck size={13} className='text-wood-500' />
-                {stat.label}
+                <T k={stat.label} />
               </p>
             </div>
           ))}

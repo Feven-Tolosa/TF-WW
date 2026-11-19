@@ -5,6 +5,7 @@ import { ImageUp, X } from 'lucide-react'
 import AdminShell from '@/components/AdminShell'
 import { api, getToken, clearToken, uploadImage } from '@/lib/api'
 import { useRouter } from 'next/navigation'
+import { T, useLanguage } from '@/lib/i18n'
 
 type Furniture = {
   id: number
@@ -48,6 +49,7 @@ export default function FurniturePage() {
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [page, setPage] = useState(1)
+  const { t } = useLanguage()
 
   useEffect(() => {
     if (!getToken()) {
@@ -179,7 +181,7 @@ export default function FurniturePage() {
 
   const handleDelete = async (id: number) => {
     if (!guard()) return
-    if (!confirm('Delete this furniture item?')) return
+    if (!confirm(t('admin.confirmDeleteFurniture'))) return
 
     try {
       await api(`/furniture/${id}`, { method: 'DELETE' })
@@ -194,12 +196,14 @@ export default function FurniturePage() {
       <div className='mb-6 flex flex-wrap items-center justify-between gap-4 sm:mb-8'>
         <div>
           <p className='mb-1 text-xs font-medium uppercase tracking-[0.3em] text-wood-700'>
-            Catalog
+            <T k='admin.catalogue' />
           </p>
-          <h1 className='admin-page-title'>Furniture Management</h1>
+          <h1 className='admin-page-title'>
+            <T k='admin.furnitureManagement' />
+          </h1>
         </div>
         <button onClick={openAddModal} className='admin-btn w-full sm:w-auto'>
-          + Add Furniture
+          <T k='admin.addFurniture' />
         </button>
       </div>
 
@@ -207,7 +211,7 @@ export default function FurniturePage() {
       <div className='mb-6 flex flex-col gap-3 sm:flex-row'>
         <input
           type='text'
-          placeholder='Search by name or description…'
+          placeholder={t('admin.searchFurniture')}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value)
@@ -223,7 +227,9 @@ export default function FurniturePage() {
           }}
           className='admin-input sm:w-auto'
         >
-          <option value='all'>All categories</option>
+          <option value='all'>
+            <T k='admin.allCategories' />
+          </option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
@@ -246,7 +252,7 @@ export default function FurniturePage() {
                     <div>
                       <p className='font-medium text-stone-900'>{item.name}</p>
                       <p className='mt-0.5 text-xs text-stone-500'>
-                        {item.category?.name ?? 'No category'} · ETB{' '}
+                        {item.category?.name ?? t('admin.noCategory')} · ETB{' '}
                         {Number(item.price).toLocaleString()}
                       </p>
                     </div>
@@ -257,7 +263,7 @@ export default function FurniturePage() {
                           : 'bg-stone-200 text-stone-600'
                       }`}
                     >
-                      {item.available ? 'Available' : 'Unavailable'}
+                      {item.available ? t('admin.available') : t('admin.unavailable')}
                     </span>
                   </div>
                   <div className='mt-3 flex items-center gap-3'>
@@ -265,13 +271,13 @@ export default function FurniturePage() {
                       onClick={() => openEditModal(item)}
                       className='rounded border border-stone-300 bg-white px-4 py-2 text-sm text-wood-700 active:bg-stone-100'
                     >
-                      Edit
+                      <T k='admin.edit' />
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
                       className='rounded border border-red-200 bg-white px-4 py-2 text-sm text-red-600 active:bg-red-50'
                     >
-                      Delete
+                      <T k='admin.delete' />
                     </button>
                   </div>
                 </div>
@@ -283,11 +289,21 @@ export default function FurniturePage() {
               <table className='w-full text-left'>
                 <thead>
                   <tr>
-                    <th className='admin-th'>Name</th>
-                    <th className='admin-th'>Category</th>
-                    <th className='admin-th'>Price (ETB)</th>
-                    <th className='admin-th'>Availability</th>
-                    <th className='admin-th text-right'>Actions</th>
+                    <th className='admin-th'>
+                      <T k='admin.name' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.category' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.price' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.availability' />
+                    </th>
+                    <th className='admin-th text-right'>
+                      <T k='admin.actions' />
+                    </th>
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-stone-200'>
@@ -306,7 +322,7 @@ export default function FurniturePage() {
                               : 'bg-stone-200 text-stone-600'
                           }`}
                         >
-                          {item.available ? 'Available' : 'Unavailable'}
+                          {item.available ? t('admin.available') : t('admin.unavailable')}
                         </span>
                       </td>
                       <td className='admin-td text-right'>
@@ -315,13 +331,13 @@ export default function FurniturePage() {
                             onClick={() => openEditModal(item)}
                             className='text-sm text-wood-700 hover:underline'
                           >
-                            Edit
+                            <T k='admin.edit' />
                           </button>
                           <button
                             onClick={() => handleDelete(item.id)}
                             className='text-sm text-red-600 hover:underline'
                           >
-                            Delete
+                            <T k='admin.delete' />
                           </button>
                         </div>
                       </td>
@@ -335,7 +351,7 @@ export default function FurniturePage() {
 
         {filtered.length === 0 && (
           <p className='p-12 text-center text-sm text-stone-500'>
-            No furniture found.
+            <T k='admin.noFurnitureFound' />
           </p>
         )}
 
@@ -344,8 +360,8 @@ export default function FurniturePage() {
           <div className='flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 p-4 text-sm text-stone-500'>
             <span>
               {(safePage - 1) * PAGE_SIZE + 1}–
-              {Math.min(safePage * PAGE_SIZE, filtered.length)} of{' '}
-              {filtered.length}
+              {Math.min(safePage * PAGE_SIZE, filtered.length)}{' '}
+              <T k='admin.of' /> {filtered.length}
             </span>
             <div className='inline-flex items-center gap-2'>
               <button
@@ -353,17 +369,17 @@ export default function FurniturePage() {
                 onClick={() => setPage(safePage - 1)}
                 className='admin-btn-ghost px-4 py-2 disabled:opacity-40'
               >
-                Prev
+                <T k='admin.prev' />
               </button>
               <span>
-                Page {safePage} of {totalPages}
+                <T k='admin.page' values={{ n: safePage, total: totalPages }} />
               </span>
               <button
                 disabled={safePage >= totalPages}
                 onClick={() => setPage(safePage + 1)}
                 className='admin-btn-ghost px-4 py-2 disabled:opacity-40'
               >
-                Next
+                <T k='admin.next' />
               </button>
             </div>
           </div>
@@ -384,18 +400,16 @@ export default function FurniturePage() {
               <div className='mb-4 flex items-start justify-between gap-3'>
                 <div>
                   <h2 className='text-xl font-light tracking-tight text-stone-900'>
-                    {editingId ? 'Edit Furniture' : 'Add Furniture'}
+                    {t(editingId ? 'admin.editFurniture' : 'admin.addFurniture')}
                   </h2>
                   <p className='mt-1 text-xs uppercase tracking-[0.3em] text-wood-700'>
-                    {editingId
-                      ? 'Update your catalog item'
-                      : 'Create a new catalog item'}
+                    {t(editingId ? 'admin.updateItem' : 'admin.createItem')}
                   </p>
                 </div>
                 <button
                   type='button'
                   onClick={() => setIsOpen(false)}
-                  aria-label='Close'
+                  aria-label={t('common.close')}
                   className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-stone-400 hover:bg-stone-100 hover:text-stone-700'
                 >
                   <X size={20} />
@@ -409,7 +423,9 @@ export default function FurniturePage() {
               )}
 
               <div className='mb-3'>
-                <label className='admin-label'>Furniture Name</label>
+                  <label className='admin-label'>
+                    <T k='admin.furnitureName' />
+                  </label>
                 <input
                   type='text'
                   required
@@ -423,7 +439,9 @@ export default function FurniturePage() {
 
               <div className='grid grid-cols-2 gap-3'>
                 <div className='mb-3'>
-                  <label className='admin-label'>Price (ETB)</label>
+                  <label className='admin-label'>
+                    <T k='admin.price' />
+                  </label>
                   <input
                     type='number'
                     required
@@ -438,7 +456,9 @@ export default function FurniturePage() {
                 </div>
 
                 <div className='mb-3'>
-                  <label className='admin-label'>Category</label>
+                  <label className='admin-label'>
+                    <T k='admin.category' />
+                  </label>
                   <select
                     className='admin-input'
                     value={formData.categoryId}
@@ -446,7 +466,9 @@ export default function FurniturePage() {
                       setFormData({ ...formData, categoryId: e.target.value })
                     }
                   >
-                    <option value=''>General</option>
+                    <option value=''>
+                      <T k='admin.general' />
+                    </option>
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -457,7 +479,9 @@ export default function FurniturePage() {
               </div>
 
               <div className='mb-3'>
-                <label className='admin-label'>Product Image</label>
+                  <label className='admin-label'>
+                    <T k='admin.productImage' />
+                  </label>
 
                 {/* Preview */}
                 {preview ? (
@@ -503,15 +527,19 @@ export default function FurniturePage() {
                     {uploading ? (
                       <div className='flex flex-col items-center gap-2'>
                         <span className='h-6 w-6 animate-spin rounded-full border-2 border-wood-600 border-t-transparent' />
-                        <p className='text-sm'>Uploading…</p>
+                        <p className='text-sm'>
+                          <T k='admin.uploading' />
+                        </p>
                       </div>
                     ) : (
                       <>
                         <ImageUp size={30} strokeWidth={1.5} />
-                        <p className='text-sm font-medium text-stone-600'>
-                          Drag &amp; drop an image here
-                        </p>
-                        <p className='text-xs'>or click to browse your device</p>
+                          <p className='text-sm font-medium text-stone-600'>
+                            <T k='admin.dragDrop' />
+                          </p>
+                          <p className='text-xs'>
+                            <T k='admin.browse' />
+                          </p>
                       </>
                     )}
                   </div>
@@ -519,7 +547,7 @@ export default function FurniturePage() {
 
                 <div className='flex flex-wrap gap-2'>
                   <label className='cursor-pointer rounded border border-stone-300 bg-white px-4 py-2 text-sm text-stone-700 transition-colors hover:border-wood-600 hover:text-wood-700'>
-                    {uploading ? 'Uploading…' : 'Upload image'}
+                    {uploading ? t('admin.uploading') : t('admin.uploadImage')}
                     <input
                       ref={inputRef}
                       type='file'
@@ -538,20 +566,19 @@ export default function FurniturePage() {
                       }}
                       className='rounded border border-red-200 bg-white px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50'
                     >
-                      Remove
+                      <T k='admin.remove' />
                     </button>
                   )}
                 </div>
 
                 <p className='mt-1.5 text-xs text-stone-400'>
-                  PNG, JPG, WebP, AVIF, GIF or SVG · max 4 MB · stored in
-                  Supabase Storage
+                  <T k='admin.formats' />
                 </p>
 
                 {/* Optional: paste a URL directly instead */}
                 <input
                   type='text'
-                  placeholder='…or paste an image URL'
+                  placeholder={t('admin.pasteUrl')}
                   className='admin-input mt-2'
                   value={formData.imageUrl}
                   onChange={(e) => {
@@ -562,7 +589,9 @@ export default function FurniturePage() {
               </div>
 
               <div className='mb-3'>
-                <label className='admin-label'>Description</label>
+                  <label className='admin-label'>
+                    <T k='admin.description' />
+                  </label>
                 <textarea
                   rows={3}
                   className='admin-input'
@@ -581,7 +610,7 @@ export default function FurniturePage() {
                     setFormData({ ...formData, available: e.target.checked })
                   }
                 />
-                Available for ordering
+                <T k='admin.availableOrder' />
               </label>
 
               <div className='flex gap-3'>
@@ -590,14 +619,16 @@ export default function FurniturePage() {
                   onClick={() => setIsOpen(false)}
                   className='admin-btn-ghost flex-1'
                 >
-                  Cancel
+                  <T k='admin.cancel' />
                 </button>
                 <button
                   type='submit'
                   disabled={saving}
                   className='admin-btn flex-[2]'
                 >
-                  {saving ? 'Saving…' : editingId ? 'Update' : 'Add Furniture'}
+                  {saving
+                    ? t('admin.saving')
+                    : t(editingId ? 'admin.update' : 'admin.addFurniture')}
                 </button>
               </div>
             </form>

@@ -9,6 +9,7 @@ import { Check, Minus, PackageSearch, Plus } from 'lucide-react'
 import Container from '@/components/Container'
 import { furnitures } from '@/data/furnitures'
 import { api } from '@/lib/api'
+import { Localized, T, useLanguage } from '@/lib/i18n'
 
 type CatalogItem = {
   id: string | number
@@ -39,6 +40,7 @@ function OrderPageContent() {
   const [submitting, setSubmitting] = useState(false)
   const [orderId, setOrderId] = useState<number | null>(null)
   const [error, setError] = useState('')
+  const { t } = useLanguage()
 
   // Load the catalog so the customer can choose any product
   useEffect(() => {
@@ -113,18 +115,24 @@ function OrderPageContent() {
   }
 
   if (loading || catalogLoading && catalogList.length === 0) {
-    return <div className='pt-40 text-center text-gray-500'>Loading…</div>
+    return (
+      <div className='pt-40 text-center text-gray-500'>
+        <T k='order.loading' />
+      </div>
+    )
   }
 
   if (!product) {
     return (
       <div className='pt-40 text-center'>
-        <p>No products available to order.</p>
+        <p>
+          <T k='order.noProducts' />
+        </p>
         <Link
           href='/collections'
           className='mt-6 inline-block bg-stone-900 px-8 py-3 text-sm tracking-wide text-white hover:bg-stone-700'
         >
-          Browse Collections
+          <T k='order.browse' />
         </Link>
       </div>
     )
@@ -141,26 +149,33 @@ function OrderPageContent() {
           <Check size={32} />
         </div>
         <h1 className='mt-6 text-3xl font-light tracking-wide'>
-          Order #{orderId} placed!
+          <T k='order.success' values={{ id: orderId }} />
         </h1>
         <p className='mt-2 text-gray-600'>
-          Thank you, {customerName || 'friend'}. We will call{' '}
-          <span className='font-medium text-stone-900'>{customerPhone}</span> to
-          confirm
-          {clampQty(quantity) > 1 ? ` your ${clampQty(quantity)} items` : ' your order'}.
+          <T
+            k='order.thanks'
+            values={{
+              name: customerName || t('order.friend'),
+              phone: customerPhone,
+              items:
+                clampQty(quantity) > 1
+                  ? t('order.items', { n: clampQty(quantity) })
+                  : t('order.yourOrder'),
+            }}
+          />
         </p>
         <div className='mt-8 space-x-4'>
           <Link
             href='/order-history'
             className='inline-block bg-stone-900 px-8 py-3 text-sm tracking-wide text-white transition-colors hover:bg-stone-700'
           >
-            Track Your Order
+            <T k='order.track' />
           </Link>
           <Link
             href={'/'}
             className='inline-block border border-stone-300 px-8 py-3 text-sm tracking-wide text-stone-900 transition-colors hover:border-stone-900'
           >
-            Continue Browsing
+            <T k='order.continue' />
           </Link>
         </div>
       </div>
@@ -172,15 +187,14 @@ function OrderPageContent() {
         <div className='mx-auto mb-16 max-w-2xl text-center'>
           <p className='mb-3 flex items-center justify-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-wood-700'>
             <span className='h-px w-10 bg-wood-400' />
-            Place an Order
+            <T k='order.eyebrow' />
             <span className='h-px w-10 bg-wood-400' />
           </p>
           <h1 className='text-3xl font-light tracking-wide md:text-4xl'>
-            Order Your Piece
+            <T k='order.title' />
           </h1>
           <p className='mt-3 text-gray-600'>
-            No account needed — pick a piece, tell us how many, and we will
-            call you to confirm.
+            <T k='order.description' />
           </p>
         </div>
 
@@ -199,7 +213,7 @@ function OrderPageContent() {
 
             <div className='mt-6'>
               <label className='mb-2 block text-xs font-medium uppercase tracking-widest text-gray-500'>
-                Choose a piece
+                <T k='order.choose' />
               </label>
               <select
                 value={String(product.id)}
@@ -208,7 +222,7 @@ function OrderPageContent() {
               >
                 {catalogList.map((item) => (
                   <option key={String(item.id)} value={String(item.id)}>
-                    {item.name} — ETB{' '}
+                    <Localized text={item.name} /> — ETB{' '}
                     {Number(item.price).toLocaleString()}
                   </option>
                 ))}
@@ -218,13 +232,17 @@ function OrderPageContent() {
 
           {/* Order details + form */}
           <div>
-            <h2 className='text-2xl font-light tracking-wide'>{product.name}</h2>
-            <p className='mt-1 text-sm text-gray-500'>Solid wood, hand-finished</p>
+            <h2 className='text-2xl font-light tracking-wide'>
+              <Localized text={product.name} />
+            </h2>
+            <p className='mt-1 text-sm text-gray-500'>
+              <T k='order.finished' />
+            </p>
 
             <div className='mt-6 flex items-end gap-3'>
               <div>
                 <p className='text-xs uppercase tracking-widest text-gray-500'>
-                  Unit Price
+                  <T k='order.unitPrice' />
                 </p>
                 <p className='text-xl text-stone-900'>
                   ETB {Number(product.price).toLocaleString()}
@@ -232,7 +250,7 @@ function OrderPageContent() {
               </div>
               <p className='ml-auto text-right'>
                 <span className='text-xs uppercase tracking-widest text-gray-500'>
-                  Total
+                  <T k='order.total' />
                 </span>
                 <span className='block text-2xl font-medium text-wood-700'>
                   ETB {total.toLocaleString()}
@@ -250,12 +268,12 @@ function OrderPageContent() {
               {/* Quantity */}
               <div>
                 <label className='mb-2 block text-xs font-medium uppercase tracking-widest text-gray-500'>
-                  Quantity
+                  <T k='order.quantity' />
                 </label>
                 <div className='inline-flex items-center border border-stone-300'>
                   <button
                     type='button'
-                    aria-label='Decrease quantity'
+                    aria-label={t('order.decrease')}
                     onClick={() => setQuantity((q) => clampQty(q - 1))}
                     className='flex h-11 w-11 items-center justify-center text-stone-600 transition-colors hover:bg-stone-100'
                   >
@@ -273,7 +291,7 @@ function OrderPageContent() {
                   />
                   <button
                     type='button'
-                    aria-label='Increase quantity'
+                    aria-label={t('order.increase')}
                     onClick={() => setQuantity((q) => clampQty(q + 1))}
                     className='flex h-11 w-11 items-center justify-center text-stone-600 transition-colors hover:bg-stone-100'
                   >
@@ -284,12 +302,12 @@ function OrderPageContent() {
 
               <div>
                 <label className='mb-2 block text-xs font-medium uppercase tracking-widest text-gray-500'>
-                  Full Name
+                  <T k='order.fullName' />
                 </label>
                 <input
                   type='text'
                   required
-                  placeholder='Your name'
+                  placeholder={t('order.yourName')}
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   className='w-full border border-stone-300 px-4 py-3 focus:border-stone-900 focus:outline-none'
@@ -298,7 +316,7 @@ function OrderPageContent() {
 
               <div>
                 <label className='mb-2 block text-xs font-medium uppercase tracking-widest text-gray-500'>
-                  Phone Number
+                  <T k='order.phone' />
                 </label>
                 <input
                   type='tel'
@@ -316,12 +334,12 @@ function OrderPageContent() {
                 className='w-full bg-stone-900 py-4 text-sm font-medium uppercase tracking-widest text-white transition-colors hover:bg-wood-700 disabled:opacity-50'
               >
                 {submitting
-                  ? 'Placing order…'
-                  : `Confirm Order · ETB ${total.toLocaleString()}`}
+                  ? t('order.placing')
+                  : t('order.confirm', { total: total.toLocaleString() })}
               </button>
 
               <p className='text-center text-xs text-gray-400'>
-                No account needed — we call you to confirm.
+                <T k='order.note' />
               </p>
             </form>
           </div>
@@ -330,15 +348,17 @@ function OrderPageContent() {
         {/* Track order link */}
         <div className='mx-auto mt-20 flex max-w-2xl flex-col items-center gap-3 rounded-lg border border-wood-200 bg-wood-50 px-8 py-8 text-center'>
           <PackageSearch size={28} className='text-wood-700' />
-          <p className='font-medium text-stone-900'>Already placed an order?</p>
+          <p className='font-medium text-stone-900'>
+            <T k='order.already' />
+          </p>
           <p className='text-sm text-gray-600'>
-            Look up your order status any time using your phone number.
+            <T k='order.lookup' />
           </p>
           <Link
             href='/order-history'
             className='mt-2 inline-block border border-stone-900 px-8 py-3 text-sm font-medium uppercase tracking-widest text-stone-900 transition-colors hover:bg-stone-900 hover:text-white'
           >
-            Track Your Order
+            <T k='order.track' />
           </Link>
         </div>
       </>
@@ -354,7 +374,13 @@ function OrderPageContent() {
 
 export default function OrderPage() {
   return (
-    <Suspense fallback={<div className='pt-40 text-center'>Loading…</div>}>
+    <Suspense
+      fallback={
+        <div className='pt-40 text-center'>
+          <T k='common.loading' />
+        </div>
+      }
+    >
       <OrderPageContent />
     </Suspense>
   )

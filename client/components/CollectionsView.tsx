@@ -5,14 +5,15 @@ import { ChevronDown, SlidersHorizontal } from 'lucide-react'
 import FurnitureCard from './FurnitureCard'
 import Container from './Container'
 import type { Furniture } from '@/data/furnitures'
+import { T, localizeText, useLanguage, type TranslationKey } from '@/lib/i18n'
 
 type SortKey = 'featured' | 'price-asc' | 'price-desc' | 'name'
 
-const sortOptions: { value: SortKey; label: string }[] = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'name', label: 'Name A–Z' },
+const sortOptions: { value: SortKey; key: TranslationKey }[] = [
+  { value: 'featured', key: 'collections.featured' },
+  { value: 'price-asc', key: 'collections.priceAsc' },
+  { value: 'price-desc', key: 'collections.priceDesc' },
+  { value: 'name', key: 'collections.name' },
 ]
 
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
 export default function CollectionsView({ items }: Props) {
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [sort, setSort] = useState<SortKey>('featured')
+  const { language, t } = useLanguage()
 
   const categories = useMemo(() => {
     const counts = new Map<string, number>()
@@ -29,16 +31,16 @@ export default function CollectionsView({ items }: Props) {
       counts.set(item.category, (counts.get(item.category) ?? 0) + 1)
     })
     return [
-      { key: 'all', label: 'All', count: items.length },
+      { key: 'all', label: localizeText('All', language), count: items.length },
       ...Array.from(counts.entries())
         .sort((a, b) => a[0].localeCompare(b[0]))
         .map(([key, count]) => ({
           key,
-          label: key.charAt(0).toUpperCase() + key.slice(1),
+          label: localizeText(key.charAt(0).toUpperCase() + key.slice(1), language),
           count,
         })),
     ]
-  }, [items])
+  }, [items, language])
 
   const visibleItems = useMemo(() => {
     const filtered =
@@ -59,7 +61,8 @@ export default function CollectionsView({ items }: Props) {
   }, [items, activeCategory, sort])
 
   const activeLabel =
-    categories.find((c) => c.key === activeCategory)?.label ?? 'All'
+    categories.find((c) => c.key === activeCategory)?.label ??
+    localizeText('All', language)
 
   return (
     <section className='pt-32 pb-24'>
@@ -68,14 +71,13 @@ export default function CollectionsView({ items }: Props) {
         <div className='mb-12 max-w-2xl'>
           <p className='mb-3 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-wood-600'>
             <span className='h-px w-8 bg-wood-400' />
-            The Catalogue
+            <T k='collections.catalogue' />
           </p>
           <h1 className='text-4xl font-light tracking-tight text-stone-900 md:text-5xl'>
-            Our Collections
+            <T k='collections.title' />
           </h1>
           <p className='mt-4 leading-relaxed text-stone-600'>
-            Every piece is made to order in our workshop from responsibly
-            sourced solid wood. Browse by category or explore the full range.
+            <T k='collections.description' />
           </p>
         </div>
 
@@ -107,12 +109,24 @@ export default function CollectionsView({ items }: Props) {
             {/* Sort */}
             <div className='flex shrink-0 items-center justify-between gap-4 lg:justify-end'>
               <span className='hidden text-xs uppercase tracking-widest text-stone-400 sm:flex sm:items-center sm:gap-2'>
-                <SlidersHorizontal size={13} />
-                {visibleItems.length} {visibleItems.length === 1 ? 'Piece' : 'Pieces'}
+                 <SlidersHorizontal size={13} />
+                 <T
+                   k='collections.pieces'
+                   values={{
+                     n: visibleItems.length,
+                     unit: t(
+                       visibleItems.length === 1
+                         ? 'collections.piece'
+                         : 'collections.piecesPlural',
+                     ),
+                   }}
+                 />
               </span>
 
               <label className='relative flex items-center'>
-                <span className='sr-only'>Sort products</span>
+                <span className='sr-only'>
+                  <T k='collections.sort' />
+                </span>
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value as SortKey)}
@@ -120,7 +134,7 @@ export default function CollectionsView({ items }: Props) {
                 >
                   {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
-                      {option.label}
+                      {t(option.key)}
                     </option>
                   ))}
                 </select>
@@ -154,13 +168,13 @@ export default function CollectionsView({ items }: Props) {
         ) : (
           <div className='border border-dashed border-stone-300 py-24 text-center'>
             <p className='text-lg font-light text-stone-500'>
-              No pieces found in {activeLabel}.
+              <T k='collections.noPieces' values={{ category: activeLabel }} />
             </p>
             <button
               onClick={() => setActiveCategory('all')}
               className='mt-4 text-sm uppercase tracking-widest text-wood-700 underline underline-offset-4 hover:text-wood-900'
             >
-              View all collections
+              <T k='collections.viewAll' />
             </button>
           </div>
         )}

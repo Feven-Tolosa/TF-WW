@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import AdminShell from '@/components/AdminShell'
 import { api, getToken, clearToken } from '@/lib/api'
 import { useRouter } from 'next/navigation'
+import { Localized, T, useLanguage } from '@/lib/i18n'
 
 type Order = {
   id: number
@@ -30,6 +31,7 @@ export default function OrdersPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('ALL')
   const [page, setPage] = useState(1)
+  const { t } = useLanguage()
 
   useEffect(() => {
     if (!getToken()) {
@@ -82,16 +84,18 @@ export default function OrdersPage() {
     <AdminShell>
       <div className='mb-6 sm:mb-8'>
         <p className='mb-1 text-xs font-medium uppercase tracking-[0.3em] text-wood-700'>
-          Orders
+          <T k='admin.orders' />
         </p>
-        <h1 className='admin-page-title'>Client Orders</h1>
+        <h1 className='admin-page-title'>
+          <T k='admin.clientOrders' />
+        </h1>
       </div>
 
       {/* Search & Filter */}
       <div className='mb-6 flex flex-col gap-3 sm:flex-row'>
         <input
           type='text'
-          placeholder='Search by client, phone or product…'
+          placeholder={t('admin.searchOrders')}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value)
@@ -107,10 +111,18 @@ export default function OrdersPage() {
           }}
           className='admin-input sm:w-auto'
         >
-          <option value='ALL'>All statuses</option>
-          <option value='PENDING'>Pending</option>
-          <option value='COMPLETED'>Completed</option>
-          <option value='CANCELLED'>Cancelled</option>
+          <option value='ALL'>
+            <T k='admin.allStatuses' />
+          </option>
+          <option value='PENDING'>
+            <T k='status.pending' />
+          </option>
+          <option value='COMPLETED'>
+            <T k='status.completed' />
+          </option>
+          <option value='CANCELLED'>
+            <T k='status.cancelled' />
+          </option>
         </select>
       </div>
 
@@ -130,7 +142,7 @@ export default function OrdersPage() {
                         {order.customerName}
                       </p>
                       <p className='mt-0.5 text-xs text-stone-500'>
-                        {order.furniture.name}
+                        <Localized text={order.furniture.name} />
                       </p>
                       <a
                         href={`tel:${order.customerPhone}`}
@@ -145,7 +157,13 @@ export default function OrdersPage() {
                     <span
                       className={`shrink-0 rounded-full px-2.5 py-1 text-xs ${statusStyles[order.status]}`}
                     >
-                      {order.status.toLowerCase()}
+                      {t(
+                        order.status === 'PENDING'
+                          ? 'status.pending'
+                          : order.status === 'COMPLETED'
+                            ? 'status.completed'
+                            : 'status.cancelled',
+                      )}
                     </span>
                   </div>
 
@@ -155,13 +173,13 @@ export default function OrdersPage() {
                         onClick={() => updateStatus(order.id, 'COMPLETED')}
                         className='flex-1 rounded border border-wood-300 bg-white px-4 py-2 text-sm text-wood-700 active:bg-wood-50'
                       >
-                        Mark Completed
+                        <T k='admin.markCompleted' />
                       </button>
                       <button
                         onClick={() => updateStatus(order.id, 'CANCELLED')}
                         className='rounded border border-red-200 bg-white px-4 py-2 text-sm text-red-600 active:bg-red-50'
                       >
-                        Cancel
+                        <T k='admin.cancel' />
                       </button>
                     </div>
                   )}
@@ -174,12 +192,24 @@ export default function OrdersPage() {
               <table className='w-full text-left'>
                 <thead>
                   <tr>
-                    <th className='admin-th'>Client</th>
-                    <th className='admin-th'>Phone</th>
-                    <th className='admin-th'>Product</th>
-                    <th className='admin-th'>Price</th>
-                    <th className='admin-th'>Status</th>
-                    <th className='admin-th'>Action</th>
+                    <th className='admin-th'>
+                      <T k='admin.client' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.phone' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.products' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='order.total' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.status' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.action' />
+                    </th>
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-stone-200'>
@@ -196,7 +226,9 @@ export default function OrdersPage() {
                           {order.customerPhone}
                         </a>
                       </td>
-                      <td className='admin-td'>{order.furniture.name}</td>
+                      <td className='admin-td'>
+                        <Localized text={order.furniture.name} />
+                      </td>
                       <td className='admin-td'>
                         {Number(order.furniture.price).toLocaleString()} ETB
                       </td>
@@ -204,7 +236,13 @@ export default function OrdersPage() {
                         <span
                           className={`inline-block rounded-full px-2.5 py-1 text-xs ${statusStyles[order.status]}`}
                         >
-                          {order.status.toLowerCase()}
+                          {t(
+                        order.status === 'PENDING'
+                          ? 'status.pending'
+                          : order.status === 'COMPLETED'
+                            ? 'status.completed'
+                            : 'status.cancelled',
+                      )}
                         </span>
                       </td>
                       <td className='admin-td'>
@@ -217,7 +255,7 @@ export default function OrdersPage() {
                                 }
                                 className='text-sm text-wood-700 hover:underline'
                               >
-                                Mark Completed
+                                <T k='admin.markCompleted' />
                               </button>
                               <button
                                 onClick={() =>
@@ -225,7 +263,7 @@ export default function OrdersPage() {
                                 }
                                 className='text-sm text-red-600 hover:underline'
                               >
-                                Cancel
+                                <T k='admin.cancel' />
                               </button>
                             </>
                           )}
@@ -241,7 +279,7 @@ export default function OrdersPage() {
 
         {filtered.length === 0 && (
           <p className='p-12 text-center text-sm text-stone-500'>
-            No orders found.
+            <T k='admin.noOrdersFound' />
           </p>
         )}
 
@@ -250,8 +288,8 @@ export default function OrdersPage() {
           <div className='flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 p-4 text-sm text-stone-500'>
             <span>
               {(safePage - 1) * PAGE_SIZE + 1}–
-              {Math.min(safePage * PAGE_SIZE, filtered.length)} of{' '}
-              {filtered.length}
+              {Math.min(safePage * PAGE_SIZE, filtered.length)}{' '}
+              <T k='admin.of' /> {filtered.length}
             </span>
             <div className='inline-flex items-center gap-2'>
               <button
@@ -259,17 +297,17 @@ export default function OrdersPage() {
                 onClick={() => setPage(safePage - 1)}
                 className='admin-btn-ghost px-4 py-2 disabled:opacity-40'
               >
-                Prev
+                <T k='admin.prev' />
               </button>
               <span>
-                Page {safePage} of {totalPages}
+                <T k='admin.page' values={{ n: safePage, total: totalPages }} />
               </span>
               <button
                 disabled={safePage >= totalPages}
                 onClick={() => setPage(safePage + 1)}
                 className='admin-btn-ghost px-4 py-2 disabled:opacity-40'
               >
-                Next
+                <T k='admin.next' />
               </button>
             </div>
           </div>

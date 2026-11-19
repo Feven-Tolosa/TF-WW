@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import AdminShell from '@/components/AdminShell'
 import { api, getToken, clearToken } from '@/lib/api'
+import { Localized, T, useLanguage } from '@/lib/i18n'
 
 type Furniture = {
   id: number
@@ -52,6 +53,7 @@ export default function AdminDashboard() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [flash, setFlash] = useState('')
+  const { t } = useLanguage()
 
   const loadCategories = useCallback(() => {
     api<Category[]>('/categories').then(setCategories).catch(() => setCategories([]))
@@ -163,7 +165,7 @@ export default function AdminDashboard() {
       }
 
       setIsOpen(false)
-      setFlash(editingId ? 'Product updated.' : 'Product added.')
+      setFlash(t(editingId ? 'admin.updated' : 'admin.added'))
       loadProducts()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Save failed')
@@ -174,13 +176,13 @@ export default function AdminDashboard() {
 
   const handleDelete = async (id: number) => {
     if (!guard()) return
-    if (!confirm('Delete this product?')) return
+    if (!confirm(t('admin.confirmDeleteProduct'))) return
 
     try {
       await api(`/furniture/${id}`, { method: 'DELETE' })
       setItems((prev) => prev.filter((i) => i.id !== id))
       setFurnitureCount((prev) => (prev === null ? 0 : prev - 1))
-      setFlash('Product deleted.')
+      setFlash(t('admin.deleted'))
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Delete failed')
     }
@@ -191,12 +193,14 @@ export default function AdminDashboard() {
       <div className='mb-6 flex flex-wrap items-center justify-between gap-4 sm:mb-8'>
         <div>
           <p className='mb-1 text-xs font-medium uppercase tracking-[0.3em] text-wood-700'>
-            Management
+            <T k='admin.management' />
           </p>
-          <h1 className='admin-page-title'>Dashboard Overview</h1>
+          <h1 className='admin-page-title'>
+            <T k='admin.overview' />
+          </h1>
         </div>
         <button onClick={openAddModal} className='admin-btn w-full sm:w-auto'>
-          + Add Product
+          <T k='admin.addProduct' />
         </button>
       </div>
 
@@ -208,15 +212,15 @@ export default function AdminDashboard() {
 
       <div className='mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6'>
         <StatCard
-          title='Total Furniture'
+          title={t('admin.totalFurniture')}
           value={furnitureCount === null ? '…' : String(furnitureCount)}
         />
         <StatCard
-          title='Pending Orders'
+          title={t('admin.pendingOrders')}
           value={pendingCount === null ? '…' : String(pendingCount)}
         />
         <StatCard
-          title='Unread Notifications'
+          title={t('admin.unread')}
           value={unreadCount === null ? '…' : String(unreadCount)}
         />
       </div>
@@ -226,24 +230,24 @@ export default function AdminDashboard() {
         <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
           <div>
             <p className='mb-1 text-xs font-medium uppercase tracking-[0.3em] text-wood-700'>
-              Catalog
+              <T k='admin.catalogue' />
             </p>
             <h2 className='text-lg font-light tracking-tight text-stone-900'>
-              Products
+              <T k='admin.products' />
             </h2>
           </div>
           <Link
             href='/admin/dashboard/furniture'
             className='text-sm text-wood-700 underline-offset-4 hover:underline'
           >
-            Advanced management →
+            <T k='admin.advanced' />
           </Link>
         </div>
 
         {items.length === 0 ? (
           <div className='rounded border border-dashed border-stone-300 bg-stone-50 py-10 text-center'>
             <p className='text-sm text-stone-500'>
-              No products yet. Tap “+ Add Product” to create your first piece.
+              <T k='admin.noProducts' />
             </p>
           </div>
         ) : (
@@ -259,7 +263,7 @@ export default function AdminDashboard() {
                     <div>
                       <p className='font-medium text-stone-900'>{item.name}</p>
                       <p className='mt-0.5 text-xs text-stone-500'>
-                        {item.category?.name ?? 'No category'} · ETB{' '}
+                        {item.category?.name ?? t('admin.noCategory')} · ETB{' '}
                         {Number(item.price).toLocaleString()}
                       </p>
                     </div>
@@ -270,7 +274,7 @@ export default function AdminDashboard() {
                           : 'bg-stone-200 text-stone-600'
                       }`}
                     >
-                      {item.available ? 'Available' : 'Unavailable'}
+                      {item.available ? t('admin.available') : t('admin.unavailable')}
                     </span>
                   </div>
                   <div className='mt-3 flex items-center gap-3'>
@@ -278,13 +282,13 @@ export default function AdminDashboard() {
                       onClick={() => openEditModal(item)}
                       className='rounded border border-stone-300 bg-white px-4 py-2 text-sm text-wood-700 active:bg-stone-100'
                     >
-                      Edit
+                      <T k='admin.edit' />
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
                       className='rounded border border-red-200 bg-white px-4 py-2 text-sm text-red-600 active:bg-red-50'
                     >
-                      Delete
+                      <T k='admin.delete' />
                     </button>
                   </div>
                 </div>
@@ -296,11 +300,21 @@ export default function AdminDashboard() {
               <table className='w-full text-left'>
                 <thead>
                   <tr>
-                    <th className='admin-th'>Name</th>
-                    <th className='admin-th'>Category</th>
-                    <th className='admin-th'>Price (ETB)</th>
-                    <th className='admin-th'>Availability</th>
-                    <th className='admin-th text-right'>Actions</th>
+                    <th className='admin-th'>
+                      <T k='admin.name' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.category' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.price' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.availability' />
+                    </th>
+                    <th className='admin-th text-right'>
+                      <T k='admin.actions' />
+                    </th>
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-stone-200'>
@@ -319,7 +333,7 @@ export default function AdminDashboard() {
                               : 'bg-stone-200 text-stone-600'
                           }`}
                         >
-                          {item.available ? 'Available' : 'Unavailable'}
+                          {item.available ? t('admin.available') : t('admin.unavailable')}
                         </span>
                       </td>
                       <td className='admin-td text-right'>
@@ -328,13 +342,13 @@ export default function AdminDashboard() {
                             onClick={() => openEditModal(item)}
                             className='text-sm text-wood-700 hover:underline'
                           >
-                            Edit
+                            <T k='admin.edit' />
                           </button>
                           <button
                             onClick={() => handleDelete(item.id)}
                             className='text-sm text-red-600 hover:underline'
                           >
-                            Delete
+                            <T k='admin.delete' />
                           </button>
                         </div>
                       </td>
@@ -350,23 +364,25 @@ export default function AdminDashboard() {
       <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
         <div>
           <p className='mb-1 text-xs font-medium uppercase tracking-[0.3em] text-wood-700'>
-            Activity
+            <T k='admin.activity' />
           </p>
           <h2 className='text-lg font-light tracking-tight text-stone-900'>
-            Recent Orders
+            <T k='admin.recentOrders' />
           </h2>
         </div>
         <Link
           href='/admin/dashboard/notifications'
           className='text-sm text-wood-700 underline-offset-4 hover:underline'
         >
-          View notifications →
+          <T k='admin.viewNotifications' />
         </Link>
       </div>
 
       <section className='admin-card p-4 sm:p-6'>
         {recentOrders.length === 0 ? (
-          <p className='py-8 text-center text-sm text-stone-500'>No orders yet.</p>
+          <p className='py-8 text-center text-sm text-stone-500'>
+            <T k='admin.noOrdersYet' />
+          </p>
         ) : (
           <>
             {/* Mobile order cards */}
@@ -382,7 +398,7 @@ export default function AdminDashboard() {
                         {o.customerName}
                       </p>
                       <p className='mt-0.5 text-xs text-stone-500'>
-                        {o.furniture.name}
+                        <Localized text={o.furniture.name} />
                       </p>
                       <a
                         href={`tel:${o.customerPhone}`}
@@ -402,10 +418,18 @@ export default function AdminDashboard() {
               <table className='w-full text-left'>
                 <thead>
                   <tr>
-                    <th className='admin-th'>Customer</th>
-                    <th className='admin-th'>Phone</th>
-                    <th className='admin-th'>Product</th>
-                    <th className='admin-th'>Status</th>
+                    <th className='admin-th'>
+                      <T k='admin.customer' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.phone' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.products' />
+                    </th>
+                    <th className='admin-th'>
+                      <T k='admin.status' />
+                    </th>
                   </tr>
                 </thead>
                 <tbody className='divide-y divide-stone-200'>
@@ -413,7 +437,9 @@ export default function AdminDashboard() {
                     <tr key={o.id} className='hover:bg-stone-50'>
                       <td className='admin-td font-medium'>{o.customerName}</td>
                       <td className='admin-td'>{o.customerPhone}</td>
-                      <td className='admin-td'>{o.furniture.name}</td>
+                      <td className='admin-td'>
+                        <Localized text={o.furniture.name} />
+                      </td>
                       <td className='admin-td'>
                         <OrderBadge status={o.status} />
                       </td>
@@ -429,7 +455,7 @@ export default function AdminDashboard() {
           href='/admin/dashboard/orders'
           className='mt-4 inline-block text-sm text-wood-700 underline-offset-4 hover:underline'
         >
-          View all orders →
+          <T k='admin.viewAllOrders' />
         </Link>
       </section>
 
@@ -447,18 +473,16 @@ export default function AdminDashboard() {
               <div className='mb-4 flex items-start justify-between gap-3'>
                 <div>
                   <h2 className='text-xl font-light tracking-tight text-stone-900'>
-                    {editingId ? 'Edit Product' : 'Add Product'}
+                    {t(editingId ? 'admin.editProduct' : 'admin.addProduct')}
                   </h2>
                   <p className='mt-1 text-xs uppercase tracking-[0.3em] text-wood-700'>
-                    {editingId
-                      ? 'Update your catalog item'
-                      : 'Create a new catalog item'}
+                    {t(editingId ? 'admin.updateItem' : 'admin.createItem')}
                   </p>
                 </div>
                 <button
                   type='button'
                   onClick={() => setIsOpen(false)}
-                  aria-label='Close'
+                  aria-label={t('common.close')}
                   className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-stone-400 hover:bg-stone-100 hover:text-stone-700'
                 >
                   <X size={20} />
@@ -472,7 +496,9 @@ export default function AdminDashboard() {
               )}
 
               <div className='mb-3'>
-                <label className='admin-label'>Product Name</label>
+                  <label className='admin-label'>
+                    <T k='admin.productName' />
+                  </label>
                 <input
                   type='text'
                   required
@@ -486,7 +512,9 @@ export default function AdminDashboard() {
 
               <div className='grid grid-cols-2 gap-3'>
                 <div className='mb-3'>
-                  <label className='admin-label'>Price (ETB)</label>
+                  <label className='admin-label'>
+                    <T k='admin.price' />
+                  </label>
                   <input
                     type='number'
                     required
@@ -501,7 +529,9 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className='mb-3'>
-                  <label className='admin-label'>Category</label>
+                  <label className='admin-label'>
+                    <T k='admin.category' />
+                  </label>
                   <select
                     className='admin-input'
                     value={formData.categoryId}
@@ -509,7 +539,9 @@ export default function AdminDashboard() {
                       setFormData({ ...formData, categoryId: e.target.value })
                     }
                   >
-                    <option value=''>General</option>
+                    <option value=''>
+                      <T k='admin.general' />
+                    </option>
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -520,7 +552,9 @@ export default function AdminDashboard() {
               </div>
 
               <div className='mb-3'>
-                <label className='admin-label'>Image URL</label>
+                  <label className='admin-label'>
+                    <T k='admin.imageUrl' />
+                  </label>
                 <input
                   type='text'
                   placeholder='/images/1.png'
@@ -533,7 +567,9 @@ export default function AdminDashboard() {
               </div>
 
               <div className='mb-3'>
-                <label className='admin-label'>Description</label>
+                  <label className='admin-label'>
+                    <T k='admin.description' />
+                  </label>
                 <textarea
                   rows={3}
                   className='admin-input'
@@ -552,7 +588,7 @@ export default function AdminDashboard() {
                     setFormData({ ...formData, available: e.target.checked })
                   }
                 />
-                Available for ordering
+                <T k='admin.availableOrder' />
               </label>
 
               <div className='flex gap-3'>
@@ -561,14 +597,16 @@ export default function AdminDashboard() {
                   onClick={() => setIsOpen(false)}
                   className='admin-btn-ghost flex-1'
                 >
-                  Cancel
+                  <T k='admin.cancel' />
                 </button>
                 <button
                   type='submit'
                   disabled={saving}
                   className='admin-btn flex-[2]'
                 >
-                  {saving ? 'Saving…' : editingId ? 'Update' : 'Add Product'}
+                  {saving
+                    ? t('admin.saving')
+                    : t(editingId ? 'admin.update' : 'admin.addProduct')}
                 </button>
               </div>
             </form>
@@ -591,6 +629,7 @@ function StatCard({ title, value }: { title: string; value: string }) {
 }
 
 function OrderBadge({ status }: { status: Order['status'] }) {
+  const { t } = useLanguage()
   const styles: Record<Order['status'], string> = {
     PENDING: 'bg-yellow-100 text-yellow-800',
     COMPLETED: 'bg-green-100 text-green-800',
@@ -600,7 +639,13 @@ function OrderBadge({ status }: { status: Order['status'] }) {
     <span
       className={`inline-block rounded-full px-2.5 py-1 text-xs ${styles[status]}`}
     >
-      {status.toLowerCase()}
+      {t(
+        status === 'PENDING'
+          ? 'status.pending'
+          : status === 'COMPLETED'
+            ? 'status.completed'
+            : 'status.cancelled',
+      )}
     </span>
   )
 }

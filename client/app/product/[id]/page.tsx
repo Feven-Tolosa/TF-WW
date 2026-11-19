@@ -3,6 +3,7 @@ import Container from '@/components/Container'
 import FurnitureCard from '@/components/FurnitureCard'
 import Link from 'next/link'
 import { furnitures } from '@/data/furnitures'
+import { Localized, T } from '@/lib/i18n'
 
 type StaticFurniture = (typeof furnitures)[number]
 
@@ -51,7 +52,11 @@ export default async function ProductPage({
   const product = await getProduct(id)
 
   if (!product) {
-    return <div className='pt-40 text-center'>Product not found</div>
+    return (
+      <div className='pt-40 text-center'>
+        <T k='product.notFound' />
+      </div>
+    )
   }
 
   let relatedFurniture = furnitures.filter(
@@ -107,20 +112,20 @@ export default async function ProductPage({
           {/* Details */}
           <div>
             <h1 className='text-3xl font-light tracking-wide'>
-              {product.name}
+              <Localized text={product.name} />
             </h1>
             <p className='mt-4 text-xl text-gray-700'>
               ETB {Number(product.price).toLocaleString()}
             </p>
             <p className='mt-6 text-gray-600 leading-relaxed'>
-              {product.description}
+              <Localized text={product.description} />
             </p>
 
             <Link
               href={`/order?productId=${product.id}`}
               className='mt-10 inline-block bg-stone-900 px-10 py-3 text-sm tracking-wide text-white transition-colors hover:bg-wood-800'
             >
-              Order Now
+              <T k='product.orderNow' />
             </Link>
           </div>
         </div>
@@ -128,7 +133,9 @@ export default async function ProductPage({
         {/* Related Furniture */}
         {relatedFurniture.length > 0 && (
           <div className='mt-28'>
-            <h2 className='text-2xl font-light mb-10'>You may also like</h2>
+            <h2 className='text-2xl font-light mb-10'>
+              <T k='product.related' />
+            </h2>
 
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8'>
               {relatedFurniture.map((item) => (

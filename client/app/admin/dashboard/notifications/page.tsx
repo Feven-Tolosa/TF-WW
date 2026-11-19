@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import AdminShell from '@/components/AdminShell'
 import { api, getToken, clearToken } from '@/lib/api'
 import { useRouter } from 'next/navigation'
+import { T, useLanguage } from '@/lib/i18n'
 
 type Notification = {
   id: number
@@ -23,6 +24,7 @@ export default function NotificationsPage() {
   const router = useRouter()
   const [items, setItems] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
+  const { language } = useLanguage()
 
   useEffect(() => {
     if (!getToken()) {
@@ -67,16 +69,18 @@ return (
       <div className='mb-6 flex flex-wrap items-center justify-between gap-4 sm:mb-8'>
         <div>
           <p className='mb-1 text-xs font-medium uppercase tracking-[0.3em] text-wood-700'>
-            Inbox
+            <T k='admin.inbox' />
           </p>
-          <h1 className='admin-page-title'>Order Notifications</h1>
+          <h1 className='admin-page-title'>
+            <T k='admin.orderNotifications' />
+          </h1>
         </div>
         {items.length > 0 && (
           <button
             onClick={markAllRead}
             className='text-sm text-wood-700 underline-offset-4 hover:underline'
           >
-            Mark all as read
+            <T k='admin.markAllRead' />
           </button>
         )}
       </div>
@@ -84,13 +88,13 @@ return (
       <div className='space-y-3'>
         {loading && (
           <p className='admin-card p-8 text-center text-sm text-stone-500'>
-            Loading…
+            <T k='common.loading' />
           </p>
         )}
 
         {!loading && items.length === 0 && (
           <p className='admin-card p-8 text-center text-sm text-stone-500'>
-            No notifications yet.
+            <T k='admin.noNotifications' />
           </p>
         )}
 
@@ -114,22 +118,24 @@ return (
                   onClick={() => markRead(n.id)}
                   className='shrink-0 text-sm text-stone-500 underline-offset-4 hover:text-stone-800 hover:underline'
                 >
-                  Mark read
+                  <T k='admin.markRead' />
                 </button>
               )}
             </div>
 
             {n.order && (
               <p className='mt-1 text-sm text-stone-500'>
-                Selected furniture:{' '}
+                <T k='admin.selectedFurniture' />{' '}
                 <span className='text-stone-800'>
                   {n.order.furniture.name}
                 </span>{' '}
-                · Order date:{' '}
+                · <T k='admin.orderDate' />{' '}
                 <span className='text-stone-800'>
-                  {new Date(n.order.createdAt).toLocaleDateString()}
+                  {new Date(n.order.createdAt).toLocaleDateString(
+                    language === 'am' ? 'am-ET' : undefined,
+                  )}
                 </span>{' '}
-                · Client:{' '}
+                · <T k='admin.client' />{' '}
                 <a
                   href={`tel:${n.order.customerPhone}`}
                   className='text-wood-700 hover:underline'

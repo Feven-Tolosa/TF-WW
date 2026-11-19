@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { getToken } from '@/lib/api'
+import { T, useLanguage } from '@/lib/i18n'
 
 export default function AdminIndexPage() {
   const [token, setToken] = useState<string | null | undefined>(undefined)
+  const { t } = useLanguage()
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -20,22 +22,22 @@ export default function AdminIndexPage() {
           TF Wood Works
         </Link>
         <p className='mb-2 text-xs font-medium uppercase tracking-[0.3em] text-wood-700'>
-          Admin Panel
+          <T k='admin.panel' />
         </p>
         <p className='mb-8 text-sm text-stone-500'>
-          {token
-            ? 'You are signed in. Continue to your dashboard.'
-            : 'Sign in to manage furniture, orders and notifications.'}
+          {token ? t('admin.signedIn') : t('admin.signInManage')}
         </p>
 
         {token === undefined ? (
-          <p className='text-sm text-stone-400'>Checking session…</p>
+          <p className='text-sm text-stone-400'>
+            <T k='admin.checking' />
+          </p>
         ) : token ? (
           <Link
             href='/admin/dashboard'
             className='admin-btn inline-flex w-full'
           >
-            Go to Dashboard
+            <T k='admin.goDashboard' />
             <ArrowRight size={16} />
           </Link>
         ) : (
@@ -43,7 +45,7 @@ export default function AdminIndexPage() {
             href='/admin/login'
             className='admin-btn inline-flex w-full'
           >
-            Admin Login
+            <T k='admin.login' />
             <ArrowRight size={16} />
           </Link>
         )}

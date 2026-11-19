@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -10,22 +12,23 @@ import {
   Youtube,
 } from 'lucide-react'
 import Container from '../Container'
+import { T, useLanguage, type TranslationKey } from '@/lib/i18n'
 
-const exploreLinks = [
-  { label: 'Home', href: '/' },
-  { label: 'All Collections', href: '/collections' },
-  { label: 'Your Wishlist', href: '/wishlist' },
-  { label: 'Place an Order', href: '/order' },
-  { label: 'Track Your Order', href: '/order-history' },
+const exploreLinks: { key: TranslationKey; href: string }[] = [
+  { key: 'nav.home', href: '/' },
+  { key: 'footer.allCollections', href: '/collections' },
+  { key: 'footer.yourWishlist', href: '/wishlist' },
+  { key: 'footer.placeOrder', href: '/order' },
+  { key: 'footer.trackOrder', href: '/order-history' },
 ]
 
-const categoryLinks = [
-  { label: 'Chairs', href: '/category/chairs' },
-  { label: 'Tables', href: '/category/tables' },
-  { label: 'Sofas', href: '/category/sofas' },
-  { label: 'Dining Sets', href: '/category/dining' },
-  { label: 'Beds', href: '/category/beds' },
-  { label: 'Kitchen', href: '/category/kitchen' },
+const categoryLinks: { key: TranslationKey; href: string }[] = [
+  { key: 'category.chairs', href: '/category/chairs' },
+  { key: 'category.tables', href: '/category/tables' },
+  { key: 'category.sofas', href: '/category/sofas' },
+  { key: 'category.diningSets', href: '/category/dining' },
+  { key: 'category.beds', href: '/category/beds' },
+  { key: 'category.kitchen', href: '/category/kitchen' },
 ]
 
 const socials = [
@@ -35,6 +38,8 @@ const socials = [
 ]
 
 export default function Footer() {
+  const { t } = useLanguage()
+
   return (
     <footer className='bg-stone-950 text-white/60'>
       {/* Newsletter */}
@@ -43,13 +48,12 @@ export default function Footer() {
           <div className='flex flex-col items-start justify-between gap-8 py-12 md:flex-row md:items-center'>
             <div>
               <h2 className='text-2xl font-light tracking-tight text-white md:text-3xl'>
-                Join the{' '}
+                <T k='footer.joinStart' />{' '}
                 <span className='italic text-wood-300'>TF Wood Works</span>{' '}
-                family
+                <T k='footer.joinEnd' />
               </h2>
               <p className='mt-2 text-sm'>
-                Be first to hear about new collections, offers and stories
-                from the workshop.
+                <T k='footer.newsletter' />
               </p>
             </div>
 
@@ -57,12 +61,12 @@ export default function Footer() {
               <input
                 type='email'
                 required
-                placeholder='Your email address'
+                placeholder={t('footer.email')}
                 className='w-full border-b border-white/25 bg-transparent py-3 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-wood-300'
               />
               <button
                 type='submit'
-                aria-label='Subscribe'
+                aria-label={t('footer.subscribe')}
                 className='group ml-4 flex h-11 w-11 shrink-0 items-center justify-center bg-wood-700 text-white transition-colors hover:bg-wood-500'
               >
                 <ArrowRight
@@ -84,8 +88,7 @@ export default function Footer() {
               TF<span className='text-wood-300'>Woods</span>
             </h2>
             <p className='text-sm leading-relaxed'>
-              Thoughtfully crafted furniture for modern living. Designed to
-              bring warmth, comfort, and timeless style into your space.
+              <T k='footer.brand' />
             </p>
 
             <div className='mt-6 flex gap-3'>
@@ -105,16 +108,16 @@ export default function Footer() {
           {/* Explore */}
           <div>
             <h3 className='mb-5 text-sm font-medium uppercase tracking-widest text-white'>
-              Explore
+              <T k='footer.explore' />
             </h3>
             <ul className='space-y-3 text-sm'>
               {exploreLinks.map((link) => (
-                <li key={link.label}>
+                <li key={link.key}>
                   <Link
                     href={link.href}
                     className='inline-block transition-all duration-300 hover:translate-x-1 hover:text-wood-300'
                   >
-                    {link.label}
+                    <T k={link.key} />
                   </Link>
                 </li>
               ))}
@@ -124,16 +127,16 @@ export default function Footer() {
           {/* Categories */}
           <div>
             <h3 className='mb-5 text-sm font-medium uppercase tracking-widest text-white'>
-              Categories
+              <T k='footer.categories' />
             </h3>
             <ul className='space-y-3 text-sm'>
               {categoryLinks.map((link) => (
-                <li key={link.label}>
+                <li key={link.key}>
                   <Link
                     href={link.href}
                     className='inline-block transition-all duration-300 hover:translate-x-1 hover:text-wood-300'
                   >
-                    {link.label}
+                    <T k={link.key} />
                   </Link>
                 </li>
               ))}
@@ -143,39 +146,39 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h3 className='mb-5 text-sm font-medium uppercase tracking-widest text-white'>
-              Contact Us
+              <T k='footer.contact' />
             </h3>
             <ul className='space-y-4 text-sm'>
               <li>
                 <a
-                  href='tel:+251900000000'
+                  href='tel:+251911309060'
                   className='flex items-start gap-3 transition-colors hover:text-wood-300'
                 >
                   <Phone size={16} className='mt-0.5 shrink-0 text-wood-400' />
                   <span>
-                    +251 900 000 000
+                    +251 911 309 060
                     <span className='block text-xs text-white/40'>
-                      Call to order directly
+                      <T k='footer.callOrder' />
                     </span>
                   </span>
                 </a>
               </li>
               <li>
                 <a
-                  href='mailto:dawitberiso406@gmail.com'
+                  href='mailto:tolosafeven0@gmail.com'
                   className='flex items-start gap-3 transition-colors hover:text-wood-300'
                 >
                   <Mail size={16} className='mt-0.5 shrink-0 text-wood-400' />
-                  dawitberiso406@gmail.com
+                  tolosafeven0@gmail.com
                 </a>
               </li>
               <li className='flex items-start gap-3'>
                 <MapPin size={16} className='mt-0.5 shrink-0 text-wood-400' />
-                Addis Ababa, Ethiopia
+                <T k='footer.address' />
               </li>
               <li className='flex items-start gap-3'>
                 <Clock size={16} className='mt-0.5 shrink-0 text-wood-400' />
-                Mon – Sat · 8:00 AM – 6:00 PM
+                <T k='footer.hours' />
               </li>
             </ul>
           </div>
@@ -183,13 +186,17 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className='flex flex-col items-center justify-between gap-4 py-8 text-xs tracking-wide md:flex-row'>
-          <p>© {new Date().getFullYear()} TFWoods. All rights reserved.</p>
-          <p>Crafted with care in Ethiopia.</p>
+          <p>
+            <T k='footer.rights' values={{ year: new Date().getFullYear() }} />
+          </p>
+          <p>
+            <T k='footer.crafted' />
+          </p>
           <Link
             href='/admin/login'
             className='text-white/30 transition-colors hover:text-wood-300'
           >
-            Admin
+            <T k='footer.admin' />
           </Link>
         </div>
       </Container>

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Heart, ShoppingBag } from 'lucide-react'
 import { isInWishlist, toggleWishlist, WISHLIST_EVENT } from '@/lib/wishlist'
+import { Localized, T, useLanguage } from '@/lib/i18n'
 
 interface FurnitureCardProps {
   name: string
@@ -21,6 +22,7 @@ export default function FurnitureCard({
 }: FurnitureCardProps) {
   const id = href?.split('/').pop() ?? ''
   const [liked, setLiked] = useState(false)
+  const { t } = useLanguage()
 
   useEffect(() => {
     const sync = () => setLiked(isInWishlist(id))
@@ -53,10 +55,10 @@ export default function FurnitureCard({
         <div className='absolute inset-x-0 bottom-0 flex translate-y-full items-center justify-center gap-3 bg-gradient-to-t from-black/60 to-transparent p-5 transition-transform duration-500 ease-out group-hover:translate-y-0'>
           <span className='flex items-center gap-2 bg-white px-6 py-3 text-xs font-medium uppercase tracking-widest text-stone-900 transition-colors hover:bg-stone-900 hover:text-white'>
             <ShoppingBag size={14} />
-            Add to Cart
+            <T k='card.addToCart' />
           </span>
           <button
-            aria-label={liked ? 'Remove from wishlist' : 'Add to wishlist'}
+            aria-label={liked ? t('card.removeWishlist') : t('card.addWishlist')}
             onClick={handleLike}
             className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
               liked
@@ -80,11 +82,11 @@ export default function FurnitureCard({
         <div>
           <h3 className='text-sm font-medium tracking-wide text-stone-900'>
             <Link href={href ?? '#'} className='hover:text-wood-700'>
-              {name}
+              <Localized text={name} />
             </Link>
           </h3>
           <p className='mt-1 text-xs uppercase tracking-widest text-stone-400'>
-            Solid Wood
+            <T k='card.solidWood' />
           </p>
         </div>
         {price > 0 && (

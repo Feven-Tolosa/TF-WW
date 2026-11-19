@@ -7,6 +7,7 @@ import CollectionsView from '@/components/CollectionsView'
 import { api } from '@/lib/api'
 import { furnitures } from '@/data/furnitures'
 import { getWishlist, WISHLIST_EVENT } from '@/lib/wishlist'
+import { T } from '@/lib/i18n'
 
 type ApiFurniture = {
   id: number
@@ -60,16 +61,20 @@ export default function WishlistPage() {
     <section className='pb-24'>
       <div className='mt-5'>
         {items === null ? (
-          <p className='py-24 text-center text-gray-500'>Loading…</p>
+          <p className='py-24 text-center text-gray-500'>
+            <T k='common.loading' />
+          </p>
         ) : items.length === 0 ? (
           <div className='flex flex-col items-center gap-4 py-24 text-center'>
             <Heart size={40} className='text-stone-300' />
-            <p className='text-gray-500'>Your wishlist is empty.</p>
+            <p className='text-gray-500'>
+              <T k='wishlist.empty' />
+            </p>
             <Link
               href='/collections'
               className='bg-stone-900 px-8 py-3 text-sm tracking-wide text-white transition-colors hover:bg-stone-700'
             >
-              Browse Collections
+              <T k='order.browse' />
             </Link>
           </div>
         ) : (

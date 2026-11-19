@@ -5,12 +5,14 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X, LogOut } from 'lucide-react'
 import { clearToken } from '@/lib/api'
+import LanguageButton from './LanguageButton'
+import { T, useLanguage, type TranslationKey } from '@/lib/i18n'
 
-const links = [
-  { label: 'Dashboard', href: '/admin/dashboard' },
-  { label: 'Furniture', href: '/admin/dashboard/furniture' },
-  { label: 'Orders', href: '/admin/dashboard/orders' },
-  { label: 'Notifications', href: '/admin/dashboard/notifications' },
+const links: { key: TranslationKey; href: string }[] = [
+  { key: 'admin.dashboard', href: '/admin/dashboard' },
+  { key: 'admin.furniture', href: '/admin/dashboard/furniture' },
+  { key: 'admin.orders', href: '/admin/dashboard/orders' },
+  { key: 'admin.notifications', href: '/admin/dashboard/notifications' },
 ]
 
 const activeNavClass =
@@ -22,6 +24,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const { t } = useLanguage()
 
   const handleLogout = () => {
     clearToken()
@@ -37,7 +40,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
       <h2 className='text-xl font-light tracking-tight text-white'>
         TF Wood Works
         <span className='block pt-1 text-xs font-normal uppercase tracking-[0.3em] text-wood-400'>
-          Admin Panel
+          <T k='admin.panel' />
         </span>
       </h2>
     </div>
@@ -54,7 +57,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
             isActive(link.href) ? activeNavClass : idleNavClass
           }`}
         >
-          {link.label}
+          <T k={link.key} />
         </Link>
       ))}
     </nav>
@@ -65,7 +68,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
       onClick={handleLogout}
       className={`mt-6 flex w-full items-center justify-between border border-stone-800 py-2.5 pl-4 pr-3 text-sm text-stone-400 transition-colors hover:border-red-900/60 hover:bg-red-950/40 hover:text-red-400`}
     >
-      Logout
+      <T k='admin.logout' />
       <LogOut size={15} />
     </button>
   )
@@ -75,19 +78,23 @@ function AdminShell({ children }: { children: React.ReactNode }) {
       {/* Mobile top bar */}
       <header className='sticky top-0 z-40 flex items-center justify-between border-b border-stone-800 bg-stone-950 px-4 py-3 lg:hidden'>
         {brand}
-        <button
-          onClick={() => setOpen(true)}
-          aria-label='Open menu'
-          className='flex h-10 w-10 items-center justify-center rounded text-white active:bg-stone-800'
-        >
-          <Menu size={22} />
-        </button>
+        <div className='flex items-center gap-4'>
+          <LanguageButton className='text-white' />
+          <button
+            onClick={() => setOpen(true)}
+            aria-label={t('nav.openMenu')}
+            className='flex h-10 w-10 items-center justify-center rounded text-white active:bg-stone-800'
+          >
+            <Menu size={22} />
+          </button>
+        </div>
       </header>
 
       {/* Desktop sidebar */}
       <aside className='fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-stone-800 bg-stone-950 p-6 lg:flex'>
         {brand}
         <div className='mt-8'>{nav}</div>
+        <LanguageButton className='mt-8 text-white' />
         {logout}
       </aside>
 
@@ -103,7 +110,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
               {brand}
               <button
                 onClick={() => setOpen(false)}
-                aria-label='Close menu'
+                  aria-label={t('nav.closeMenu')}
                 className='flex h-9 w-9 shrink-0 items-center justify-center text-stone-400 hover:text-white'
               >
                 <X size={20} />

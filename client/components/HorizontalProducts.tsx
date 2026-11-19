@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import FurnitureCard from './FurnitureCard'
 import Container from './Container'
+import { T } from '@/lib/i18n'
 
 interface Props {
   items: {
@@ -16,7 +17,7 @@ interface Props {
   title?: string
 }
 
-export default function HorizontalProducts({ items, title = 'Explore the Collection' }: Props) {
+export default function HorizontalProducts({ items, title }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [paused, setPaused] = useState(false)
 
@@ -51,10 +52,10 @@ export default function HorizontalProducts({ items, title = 'Explore the Collect
           <div>
             <p className='mb-3 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-wood-600'>
               <span className='h-px w-8 bg-wood-400' />
-              Handpicked for You
+              <T k='horizontal.picked' />
             </p>
             <h2 className='text-3xl font-light tracking-tight text-stone-900 md:text-4xl'>
-              {title}
+              {title ?? <T k='horizontal.title' />}
             </h2>
           </div>
 
@@ -62,7 +63,7 @@ export default function HorizontalProducts({ items, title = 'Explore the Collect
             href='/collections'
             className='group inline-flex w-fit items-center gap-2 border-b border-stone-300 pb-1 text-sm uppercase tracking-widest text-stone-600 transition-colors hover:border-wood-600 hover:text-wood-700'
           >
-            View All
+            <T k='home.viewAll' />
             <ArrowRight
               size={14}
               className='transition-transform duration-300 group-hover:translate-x-1'

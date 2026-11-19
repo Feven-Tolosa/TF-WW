@@ -10,6 +10,7 @@ import {
   getFurniture,
   type Furniture,
 } from '@/lib/store'
+import { Localized, T, localizeText, useLanguage } from '@/lib/i18n'
 
 interface SearchModalProps {
   open: boolean
@@ -22,6 +23,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
   const [items, setItems] = useState<Furniture[]>([])
   const [loading, setLoading] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
+  const { language, t } = useLanguage()
 
   useEffect(() => {
     if (open) {
@@ -61,7 +63,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
     <div
       role='dialog'
       aria-modal='true'
-      aria-label='Search furniture'
+      aria-label={t('search.aria')}
       className={`fixed inset-0 z-[100] flex flex-col bg-stone-950/95 backdrop-blur-sm transition-opacity duration-300 ${
         open ? 'visible opacity-100' : 'invisible opacity-0'
       }`}
@@ -75,12 +77,12 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             value={query}
             autoFocus={open}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder='Search chairs, tables, beds…'
+            placeholder={t('search.placeholder')}
             className='w-full bg-transparent text-xl font-light text-white outline-none transition-colors placeholder:text-white/30 focus:text-white md:text-3xl'
           />
           <button
             onClick={onClose}
-            aria-label='Close search'
+            aria-label={t('search.close')}
             className='flex h-10 w-10 shrink-0 items-center justify-center text-white/60 transition-colors hover:text-white'
           >
             <X size={26} />
@@ -103,7 +105,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
                     : 'border-white/15 text-white/50 hover:border-white/40 hover:text-white'
                 }`}
               >
-                {chip.label}
+                {localizeText(chip.label, language)}
               </button>
             ))}
           </div>
@@ -112,10 +114,10 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
           {!loading && (
             <p className='mt-6 text-xs uppercase tracking-widest text-white/30'>
               {showEmpty
-                ? '0 results'
+                ? t('search.zero')
                 : resultCount === 1
-                  ? '1 result'
-                  : `${resultCount} results`}
+                  ? t('search.one')
+                  : t('search.many', { n: resultCount })}
             </p>
           )}
 
@@ -124,16 +126,25 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             <div className='flex items-center justify-center gap-3 py-24 text-white/40'>
               <Loader2 size={20} className='animate-spin' />
               <span className='text-sm uppercase tracking-widest'>
-                Loading…
+                <T k='search.loading' />
               </span>
             </div>
           ) : showEmpty ? (
             <div className='flex flex-col items-center gap-4 py-24 text-center text-white/40'>
               <SearchX size={44} />
               <p className='text-sm tracking-wide'>
-                No furniture matches{' '}
-                {query ? <span className='text-white/70'>“{query}”</span> : ''}{' '}
-                {category !== 'all' ? `in ${category}` : ''}.
+                <T
+                  k='search.noMatch'
+                  values={{
+                    query: query ? `“${query}”` : '""',
+                    category:
+                      category !== 'all'
+                        ? t('search.inCategory', {
+                            category: localizeText(category, language),
+                          })
+                        : '',
+                  }}
+                />
               </p>
               <button
                 onClick={() => {
@@ -142,7 +153,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
                 }}
                 className='text-xs uppercase tracking-widest text-wood-300 underline-offset-4 hover:underline'
               >
-                Clear search
+                <T k='search.clear' />
               </button>
             </div>
           ) : (
@@ -163,16 +174,16 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
                       className='object-cover transition-transform duration-700 ease-out group-hover:scale-105'
                     />
                     <span className='absolute top-3 left-3 bg-white/90 px-2.5 py-1 text-[10px] uppercase tracking-widest text-stone-700 backdrop-blur'>
-                      {item.category}
+                      <Localized text={item.category} />
                     </span>
                   </div>
                   <div className='flex items-start justify-between gap-4 pt-3'>
                     <div className='min-w-0'>
                       <h3 className='truncate text-sm font-medium tracking-wide text-white group-hover:text-wood-300'>
-                        {item.name}
+                        <Localized text={item.name} />
                       </h3>
                       <p className='mt-1 line-clamp-1 text-xs text-white/35'>
-                        {item.description}
+                        <Localized text={item.description} />
                       </p>
                     </div>
                     <span className='flex shrink-0 items-center gap-1 text-sm font-medium text-wood-300'>

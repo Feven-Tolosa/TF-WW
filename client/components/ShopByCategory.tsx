@@ -1,39 +1,54 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
+import { T, useLanguage, type TranslationKey } from '@/lib/i18n'
 
-const categories = [
+const categories: {
+  key: TranslationKey
+  name: string
+  tagline: TranslationKey
+  image: string
+  href: string
+  className: string
+}[] = [
   {
+    key: 'category.sofas',
     name: 'Sofas',
-    tagline: 'Modern Comfort Collection',
+    tagline: 'shop.tag1',
     image: '/images/3.png',
     href: '/category/sofas',
     className: 'md:col-span-12 h-[320px] md:h-[440px]',
   },
   {
+    key: 'category.tables',
     name: 'Tables',
-    tagline: 'Contemporary Living',
+    tagline: 'shop.tag2',
     image: '/images/4.png',
     href: '/category/tables',
     className: 'md:col-span-4 h-[280px] md:h-[340px]',
   },
   {
+    key: 'category.dining',
     name: 'Dining',
-    tagline: 'Elegant Gatherings',
+    tagline: 'shop.tag3',
     image: '/images/2.png',
     href: '/category/dining',
     className: 'md:col-span-8 h-[280px] md:h-[340px]',
   },
   {
+    key: 'category.chairs',
     name: 'Chairs',
-    tagline: 'Crafted Seating',
+    tagline: 'shop.tag4',
     image: '/images/1.png',
     href: '/category/chairs',
     className: 'md:col-span-8 h-[280px] md:h-[340px]',
   },
   {
+    key: 'category.kitchen',
     name: 'Kitchen',
-    tagline: 'Functional Beauty',
+    tagline: 'shop.tag5',
     image: '/images/3.png',
     href: '/category/kitchen',
     className: 'md:col-span-4 h-[280px] md:h-[340px]',
@@ -41,6 +56,8 @@ const categories = [
 ]
 
 export default function ShopByCategory() {
+  const { t } = useLanguage()
+
   return (
     <section className='bg-wood-50 py-20 md:py-28'>
       <div className='mx-auto max-w-[1400px] px-6'>
@@ -48,11 +65,11 @@ export default function ShopByCategory() {
         <div className='mb-14 text-center'>
           <p className='mb-3 inline-flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-wood-600'>
             <span className='h-px w-8 bg-wood-400' />
-            Browse the Range
+            <T k='shop.eyebrow' />
             <span className='h-px w-8 bg-wood-400' />
           </p>
           <h2 className='text-3xl font-light tracking-tight text-stone-900 md:text-5xl'>
-            Shop by Category
+            <T k='shop.title' />
           </h2>
         </div>
 
@@ -60,13 +77,13 @@ export default function ShopByCategory() {
         <div className='grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-6'>
           {categories.map((cat) => (
             <Link
-              key={cat.name}
+              key={cat.key}
               href={cat.href}
               className={`group relative overflow-hidden ${cat.className}`}
             >
               <Image
                 src={cat.image}
-                alt={cat.name}
+                alt={t(cat.key)}
                 fill
                 sizes='(max-width: 768px) 100vw, 66vw'
                 className='object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105'
@@ -79,10 +96,10 @@ export default function ShopByCategory() {
               <div className='absolute inset-x-0 bottom-0 flex items-end justify-between p-6 md:p-8'>
                 <div>
                   <h3 className='text-2xl font-light tracking-wide text-white md:text-3xl'>
-                    {cat.name}
+                    <T k={cat.key} />
                   </h3>
                   <span className='mt-1 block max-h-0 overflow-hidden text-sm tracking-widest text-white/70 uppercase transition-all duration-500 group-hover:max-h-10'>
-                    {cat.tagline}
+                    <T k={cat.tagline} />
                   </span>
                 </div>
 

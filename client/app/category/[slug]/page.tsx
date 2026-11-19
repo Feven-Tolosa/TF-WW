@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Container from '@/components/Container'
 import FurnitureCard from '@/components/FurnitureCard'
 import { furnitures } from '@/data/furnitures'
+import { CategoryDescription, Localized, T } from '@/lib/i18n'
 
 interface Props {
   params: {
@@ -61,12 +62,20 @@ async function getProducts(slug: string) {
 export default async function CategoryPage({ params }: Props) {
   const slug = params?.slug
   if (!slug) {
-    return <div className='pt-40 text-center'>Invalid category</div>
+    return (
+      <div className='pt-40 text-center'>
+        <T k='category.invalid' />
+      </div>
+    )
   }
   const products = await getProducts(slug)
 
   if (products.length === 0) {
-    return <div className='pt-40 text-center'>Category not found</div>
+    return (
+      <div className='pt-40 text-center'>
+        <T k='category.notFound' />
+      </div>
+    )
   }
 
   const categoryTitle = slug.charAt(0).toUpperCase() + slug.slice(1)
@@ -84,7 +93,7 @@ export default async function CategoryPage({ params }: Props) {
 
         <div className='absolute inset-0 bg-black/40 flex items-center justify-center'>
           <h1 className='text-white text-4xl md:text-5xl font-light tracking-wide'>
-            {categoryTitle}
+            <Localized text={categoryTitle} />
           </h1>
         </div>
       </div>
@@ -93,22 +102,29 @@ export default async function CategoryPage({ params }: Props) {
         {/* Description + Count */}
         <div className='flex flex-col md:flex-row md:justify-between md:items-center mb-12 gap-4'>
           <p className='text-gray-600 max-w-xl'>
-            Discover our curated collection of {categoryTitle.toLowerCase()}
-            designed to bring warmth and elegance into your space.
+            <CategoryDescription category={categoryTitle} />
           </p>
 
           <span className='text-sm text-gray-500'>
-            {products.length} Products
+            <T k='category.products' values={{ n: products.length }} />
           </span>
         </div>
 
         {/* Sort Dropdown (UI only for now) */}
         <div className='mb-12'>
           <select className='border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:border-black'>
-            <option>Sort by</option>
-            <option>Price: Low to High</option>
-            <option>Price: High to Low</option>
-            <option>Newest</option>
+            <option>
+              <T k='category.sortBy' />
+            </option>
+            <option>
+              <T k='collections.priceAsc' />
+            </option>
+            <option>
+              <T k='collections.priceDesc' />
+            </option>
+            <option>
+              <T k='category.newest' />
+            </option>
           </select>
         </div>
 

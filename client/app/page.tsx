@@ -7,6 +7,7 @@ import HorizontalProducts from '@/components/HorizontalProducts'
 import ShopByCategory from '@/components/ShopByCategory'
 import WhyChooseUs from '@/components/WhyChooseUs'
 import { furnitures } from '@/data/furnitures'
+import { T, type TranslationKey } from '@/lib/i18n'
 
 type CatalogItem = (typeof furnitures)[number]
 
@@ -20,13 +21,13 @@ type ApiFurniture = {
   category?: { name: string } | null
 }
 
-const categoryChips = [
-  { label: 'Chairs', href: '/category/chairs' },
-  { label: 'Tables', href: '/category/tables' },
-  { label: 'Sofas', href: '/category/sofas' },
-  { label: 'Dining', href: '/category/dining' },
-  { label: 'Beds', href: '/category/beds' },
-  { label: 'Kitchen', href: '/category/kitchen' },
+const categoryChips: { key: TranslationKey; href: string }[] = [
+  { key: 'category.chairs', href: '/category/chairs' },
+  { key: 'category.tables', href: '/category/tables' },
+  { key: 'category.sofas', href: '/category/sofas' },
+  { key: 'category.dining', href: '/category/dining' },
+  { key: 'category.beds', href: '/category/beds' },
+  { key: 'category.kitchen', href: '/category/kitchen' },
 ]
 
 async function getCatalog(): Promise<CatalogItem[]> {
@@ -71,15 +72,15 @@ export default async function Home() {
       <section className='border-y border-stone-200 bg-stone-50'>
         <div className='mx-auto flex max-w-[1400px] flex-wrap items-center justify-center gap-3 px-6 py-6'>
           <span className='mr-2 text-xs font-medium uppercase tracking-[0.3em] text-stone-400'>
-            Browse
+            <T k='home.browse' />
           </span>
           {categoryChips.map((chip) => (
             <Link
-              key={chip.label}
+              key={chip.key}
               href={chip.href}
               className='rounded-full border border-stone-300 px-5 py-2 text-sm text-stone-600 transition-all duration-300 hover:border-wood-500 hover:bg-white hover:text-wood-700'
             >
-              {chip.label}
+              <T k={chip.key} />
             </Link>
           ))}
         </div>
@@ -92,10 +93,10 @@ export default async function Home() {
             <div>
               <p className='mb-3 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-wood-600'>
                 <span className='h-px w-8 bg-wood-400' />
-                Best Sellers
+                <T k='home.bestSellers' />
               </p>
               <h2 className='text-3xl font-light tracking-tight text-stone-900 md:text-4xl'>
-                Featured Pieces
+                <T k='home.featured' />
               </h2>
             </div>
 
@@ -103,7 +104,7 @@ export default async function Home() {
               href='/collections'
               className='group inline-flex w-fit items-center gap-2 border-b border-stone-300 pb-1 text-sm uppercase tracking-widest text-stone-600 transition-colors hover:border-wood-600 hover:text-wood-700'
             >
-              View All
+              <T k='home.viewAll' />
               <ArrowRight
                 size={14}
                 className='transition-transform duration-300 group-hover:translate-x-1'
@@ -135,10 +136,10 @@ export default async function Home() {
             <div className='mb-12'>
               <p className='mb-3 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-wood-600'>
                 <span className='h-px w-8 bg-wood-400' />
-                Fresh From The Workshop
+                <T k='home.fresh' />
               </p>
               <h2 className='text-3xl font-light tracking-tight text-stone-900 md:text-4xl'>
-                New Arrivals
+                <T k='nav.newArrivals' />
               </h2>
             </div>
 
@@ -159,7 +160,7 @@ export default async function Home() {
                 href='/collections'
                 className='inline-flex items-center gap-3 bg-stone-900 px-10 py-4 text-sm font-medium uppercase tracking-widest text-white transition-colors duration-300 hover:bg-wood-600'
               >
-                Explore Full Collection
+                <T k='home.exploreFull' />
                 <ArrowRight size={15} />
               </Link>
             </div>
@@ -185,29 +186,27 @@ export default async function Home() {
 
           <div className='relative flex h-full flex-col items-center justify-center px-6 text-center'>
             <p className='mb-4 text-xs font-medium uppercase tracking-[0.3em] text-wood-300'>
-              Made Just for You
+              <T k='home.madeForYou' />
             </p>
             <h2 className='max-w-2xl text-3xl font-light tracking-tight text-white md:text-5xl'>
-              Have a piece in mind? We build it to order.
+              <T k='home.ctaTitle' />
             </h2>
             <p className='mt-4 max-w-xl text-sm leading-relaxed text-white/70 md:text-base'>
-              From bespoke dining tables to full living-room sets — tell us
-              your vision and our craftsmen will bring it to life. No account
-              needed — just call or leave your name and number.
+              <T k='home.ctaDescription' />
             </p>
             <div className='mt-8 flex flex-col items-center gap-4 sm:flex-row'>
               <Link
                 href='/order'
                 className='inline-flex items-center gap-3 bg-white px-8 py-4 text-sm font-medium uppercase tracking-widest text-stone-900 transition-colors duration-300 hover:bg-wood-400 hover:text-white'
               >
-                Start an Order
+                <T k='home.startOrder' />
                 <ArrowRight size={15} />
               </Link>
               <a
                 href='tel:+251900000000'
                 className='inline-flex items-center gap-3 border border-white/40 px-8 py-4 text-sm font-medium uppercase tracking-widest text-white transition-colors duration-300 hover:border-wood-300 hover:text-wood-300'
               >
-                Call +251 900 000 000
+                <T k='home.call' />
               </a>
             </div>
           </div>

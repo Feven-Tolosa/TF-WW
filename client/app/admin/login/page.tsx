@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
 import { api, setToken, getToken } from '@/lib/api'
+import { T, useLanguage } from '@/lib/i18n'
 
 export default function AdminLogin() {
   const router = useRouter()
@@ -18,6 +19,7 @@ export default function AdminLogin() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const { t } = useLanguage()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,7 +52,7 @@ export default function AdminLogin() {
           TF Wood Works
         </h1>
         <p className='mb-7 text-xs font-medium uppercase tracking-[0.3em] text-wood-700'>
-          Admin Login
+          <T k='admin.login' />
         </p>
 
         {error && (
@@ -60,7 +62,9 @@ export default function AdminLogin() {
         )}
 
         <div className='mb-4'>
-          <label className='admin-label'>Email</label>
+          <label className='admin-label'>
+            <T k='admin.email' />
+          </label>
           <input
             type='email'
             required
@@ -72,7 +76,9 @@ export default function AdminLogin() {
         </div>
 
         <div className='mb-6'>
-          <label className='admin-label'>Password</label>
+          <label className='admin-label'>
+            <T k='admin.password' />
+          </label>
           <div className='relative'>
             <input
               type={showPassword ? 'text' : 'password'}
@@ -85,7 +91,7 @@ export default function AdminLogin() {
             <button
               type='button'
               onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-label={t(showPassword ? 'admin.hidePassword' : 'admin.showPassword')}
               className='absolute inset-y-0 right-0 flex w-11 items-center justify-center text-stone-400 transition-colors hover:text-stone-700 focus:outline-none'
             >
               {showPassword ? (
@@ -98,7 +104,7 @@ export default function AdminLogin() {
         </div>
 
         <button type='submit' disabled={loading} className='admin-btn w-full'>
-          {loading ? 'Signing in…' : 'Sign In'}
+          {loading ? t('admin.signingIn') : t('admin.signIn')}
         </button>
       </form>
     </div>
